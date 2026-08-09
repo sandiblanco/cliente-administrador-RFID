@@ -21,14 +21,17 @@ export default function RunnerInput({ onSubmit, disabled = false }) {
   }
 
   return (
-    <input
-      ref={inputRef}
-      type="text"
-      value={value}
-      placeholder="ID del corredor"
-      onChange={(event) => setValue(event.target.value)}
-      onKeyDown={handleKeyDown}
-      disabled={disabled}
-    />
+    <>
+      <input
+        ref={inputRef}
+        type="text"
+        value={value}
+        placeholder="ID del corredor"
+        onChange={(event) => setValue(event.target.value)}
+        onKeyDown={handleKeyDown}
+        disabled={disabled}
+      />
+      <p className="input-hint">Presione Enter para registrar la llegada</p>
+    </>
   )
 }

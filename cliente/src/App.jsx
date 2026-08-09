@@ -90,10 +90,17 @@ export default function App() {
     }
   }, [runners, pendingIds])
 
+  const registeredCount = runners.filter(
+    (runner) => runner.timestamp !== null,
+  ).length
+
   return (
     <main className="app">
       <header>
         <h1>Registro de llegadas</h1>
+        <p className="runner-count">
+          {registeredCount} de {runners.length} corredores registrados
+        </p>
       </header>
 
       <section className="input-section">

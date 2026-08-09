@@ -6,12 +6,12 @@ body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
-  color: #1f2933;
-  background-color: #ffffff;
+  color: #172033;
+  background-color: #f7f8fa;
 }
 
 .app {
-  max-width: 960px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 1.5rem;
 }
@@ -20,33 +20,65 @@ body {
   margin-bottom: 1.5rem;
 }
 
+.app header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #172033;
+}
+
+.runner-count {
+  margin: 0.25rem 0 0;
+  font-size: 0.95rem;
+  color: #64748b;
+}
+
 .input-section {
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .input-section input {
   width: 100%;
-  max-width: 320px;
-  padding: 0.5rem 0.75rem;
-  font-size: 1rem;
+  max-width: 440px;
+  padding: 0.75rem 1rem;
+  font-size: 1.25rem;
+  color: #172033;
+  background-color: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+}
+
+.input-section input::placeholder {
+  color: #9ca3af;
+}
+
+.input-section input:focus {
+  outline: none;
+  border-color: #168a4a;
+}
+
+.input-hint {
+  margin: 0.35rem 0 0;
+  font-size: 0.85rem;
+  color: #64748b;
 }
 
 .message {
   padding: 0.5rem 0.75rem;
   border: 1px solid;
-  border-radius: 4px;
+  border-radius: 8px;
   margin-bottom: 1rem;
 }
 
 .message.validation,
 .message.server {
-  border-color: #b91c1c;
-  color: #b91c1c;
+  border-color: #dc2626;
+  color: #dc2626;
 }
 
 .message.connection {
-  border-color: #92400e;
-  color: #92400e;
+  border-color: #b45309;
+  color: #b45309;
 }
 
 .runner-grid {
@@ -56,50 +88,61 @@ body {
 }
 
 .runner-card {
-  border: 2px solid #b91c1c;
-  border-radius: 4px;
-  padding: 0.75rem;
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
   text-align: center;
 }
 
 .runner-card.registered {
-  border-color: #15803d;
+  border-color: #168a4a;
 }
 
 .runner-card .status-dot {
   display: inline-block;
-  width: 0.75rem;
-  height: 0.75rem;
+  width: 0.875rem;
+  height: 0.875rem;
   border-radius: 50%;
   margin-bottom: 0.5rem;
-  background-color: #b91c1c;
+  background-color: #9ca3af;
 }
 
 .runner-card.registered .status-dot {
-  background-color: #15803d;
+  background-color: #168a4a;
 }
 
 .runner-card .runner-name {
+  font-size: 1.05rem;
   font-weight: 600;
+  color: #172033;
 }
 
 .runner-card .runner-id {
-  color: #52606d;
-  margin-top: 0.25rem;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #172033;
+  margin-top: 0.35rem;
 }
 
 .runner-card .runner-time {
-  font-size: 0.75rem;
-  color: #52606d;
-  margin-top: 0.25rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #168a4a;
+  margin-top: 0.35rem;
+}
+
+.runner-card .runner-time.unregistered {
+  font-weight: 400;
+  color: #64748b;
 }
 
 .runner-card .runner-pending {
-  font-size: 0.75rem;
-  color: #52606d;
-  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-top: 0.35rem;
 }
 
 .empty-message {
-  color: #52606d;
+  color: #64748b;
 }
