@@ -1,0 +1,89 @@
+import { useMemo, useState } from 'react'
+import { useRunners } from './hooks/useRunners'
+import CONFIG from './config'
+import Dashboard from './components/Dashboard'
+import RunnerTable from './components/RunnerTable'
+import SearchBar from './components/SearchBar'
+import { filterRunners } from './utils/search'
+
+const TABS = [
+  { id: 'dashboard', label: 'Dashboard' },
+  { id: 'runners', label: 'Corredores' },
+  { id: 'results', label: 'Resultados' },
+]
+
+export default function App() {
+  const { runners, loading, error, reload } = useRunners()
+  const [activeTab, setActiveTab] = useState('dashboard')
+  const [query, setQuery] = useState('')
+
+  const results = useMemo(
+    () =>
+      runners
+        .filter((r) => r.timestamp)
+        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)),
+    [runners]
+  )
+
+  const filteredRunners = useMemo(
+    () => filterRunners(runners, query),
+    [runners, query]
+  )
+
+  return (
+    <div className="app">
+      <header className="header">
+        <h1>Administrador · Control de tiempos</h1>
+        <div className="header-actions">
+          {CONFIG.useMock && <span className="badge badge-demo">Modo demo</span>}
+          <button className="reload" onClick={reload} disabled={loading}>
+            Recargar
+          </button>
+        </div>
+      </header>
+
+      <nav className="tabs" aria-label="Secciones">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            className={`tab ${activeTab === tab.id ? 'tab-active' : ''}`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </nav>
+
+      {error && (
+        <p className="error">
+          No se pudo obtener datos del servidor: {error}
+        </p>
+      )}
+
+      {loading && <p className="loading">Cargando datos…</p>}
+
+      {!loading && activeTab === 'dashboard' && <Dashboard runners={runners} />}
+
+      {!loading && activeTab === 'runners' && (
+        <section>
+          <SearchBar query={query} onChange={setQuery} />
+          <RunnerTable
+            runners={filteredRunners}
+            emptyMessage={
+              query.trim() ? 'Sin resultados para la búsqueda' : 'Sin corredores'
+            }
+          />
+        </section>
+      )}
+
+      {!loading && activeTab === 'results' && (
+        <section>
+          <RunnerTable
+            runners={results}
+            emptyMessage="Aún no hay corredores finalizados"
+          />
+        </section>
+      )}
+    </div>
+  )
+}
