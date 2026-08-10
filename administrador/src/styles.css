@@ -2,11 +2,19 @@
    Administrador · Control de tiempos
    Identidad visual: panel técnico con lenguaje de terminal retro.
 
-   Paleta — únicamente estos tres colores y mezclas neutras entre
-   ellos (sin introducir matices nuevos):
+   Paleta base — únicamente estos tres colores y mezclas neutras
+   entre ellos (sin introducir matices nuevos):
      --c-bg    #C9C8B6  fondo principal, ~75% de la interfaz
      --c-ink   #262A2B  texto, botones, tarjetas, navegación, bordes
      --c-black #000000  acentos puntuales (foco, error, hover fuerte)
+
+   El modo oscuro (`[data-theme="dark"]`) invierte los roles de
+   --c-bg/--c-ink/--c-black; el resto de la hoja usa siempre estas
+   variables, así que la inversión se propaga sola a todo el panel.
+
+   --c-green/--c-red son el único par de tonos ajenos a la paleta
+   base, y se usan exclusivamente para el estado del corredor
+   (finalizado / pendiente) — nada más en la interfaz usa color.
    ============================================================ */
 
 :root {
@@ -23,6 +31,11 @@
   --c-ink-soft: #3e4240; /* texto secundario (~5:1 sobre bg-sunken) */
   --c-ink-faint: #9c9c8d; /* bordes y detalles decorativos */
 
+  /* Acentos puntuales de estado, en un tono terroso armónico con el
+     caqui/oliva de la paleta — no colores planos de sistema. */
+  --c-green: #375c2d; /* corredor finalizado */
+  --c-red: #7a3418; /* corredor pendiente / sin terminar */
+
   --border-w: 2px;
   --hairline: 1px;
   --radius: 2px;
@@ -31,6 +44,23 @@
     Consolas, 'Liberation Mono', Menlo, monospace;
 
   font-family: var(--font-mono);
+}
+
+/* Modo oscuro: misma paleta, roles invertidos. */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --c-bg: #262a2b;
+  --c-ink: #c9c8b6;
+  --c-black: #ffffff;
+
+  --c-bg-raised: #48494a;
+  --c-bg-sunken: #212425;
+  --c-ink-soft: #a0a193;
+  --c-ink-faint: #676963;
+
+  --c-green: #7fb86b;
+  --c-red: #e08355;
 }
 
 * {
@@ -43,6 +73,7 @@ body {
   color: var(--c-ink);
   font-size: 16px;
   line-height: 1.45;
+  transition: background-color 0.15s ease, color 0.15s ease;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -125,6 +156,27 @@ input:focus-visible {
 .reload:disabled {
   opacity: 0.45;
   cursor: default;
+}
+
+.theme-toggle {
+  background: transparent;
+  color: var(--c-bg);
+  border: var(--border-w) solid var(--c-bg-sunken);
+  border-radius: var(--radius);
+  padding: 10px 18px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.theme-toggle::before {
+  content: '◐ ';
+}
+
+.theme-toggle:hover {
+  border-color: var(--c-bg);
 }
 
 /* ---------- Navegación por pestañas ---------- */
@@ -358,7 +410,10 @@ tbody tr:nth-child(3) .rank {
   color: var(--c-ink-soft);
 }
 
-/* ---------- Estados (éxito / pendiente) — sin nuevos colores ---------- */
+/* ---------- Estados (éxito / pendiente) ----------
+   Único lugar de la interfaz que usa color: verde para un corredor
+   finalizado, rojo anaranjado para uno pendiente. El resto del panel
+   se mantiene neutro. */
 
 .badge {
   display: inline-flex;
@@ -378,9 +433,9 @@ tbody tr:nth-child(3) .rank {
 }
 
 .badge-done {
-  background: var(--c-ink);
-  color: var(--c-bg);
-  border: var(--hairline) solid var(--c-ink);
+  background: color-mix(in srgb, var(--c-green) 16%, var(--c-bg-raised));
+  color: var(--c-green);
+  border: var(--hairline) solid var(--c-green);
 }
 
 .badge-done::before {
@@ -389,12 +444,22 @@ tbody tr:nth-child(3) .rank {
 
 .badge-pending {
   background: transparent;
-  color: var(--c-ink-soft);
-  border: var(--hairline) dashed var(--c-ink-faint);
+  color: var(--c-red);
+  border: var(--hairline) dashed var(--c-red);
 }
 
 .badge-pending::before {
   content: '○';
+}
+
+/* Franja fina en el borde del primer campo de la fila: identifica el
+   estado de un vistazo sin teñir toda la tabla de color. */
+tbody tr:has(.badge-done) td:first-child {
+  box-shadow: inset 3px 0 0 var(--c-green);
+}
+
+tbody tr:has(.badge-pending) td:first-child {
+  box-shadow: inset 3px 0 0 var(--c-red);
 }
 
 /* ---------- Mensajes ---------- */
@@ -469,7 +534,9 @@ tbody tr:nth-child(3) .rank {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(38, 42, 43, 0.72);
+  /* Negro fijo (no --c-ink): funciona como velo tanto en modo claro
+     como oscuro, sin depender de qué rol tenga cada variable. */
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;

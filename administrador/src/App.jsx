@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useRunners } from './hooks/useRunners'
+import { useTheme } from './hooks/useTheme'
 import { updateResultTime } from './api/client'
 import CONFIG from './config'
 import Dashboard from './components/Dashboard'
@@ -16,6 +17,7 @@ const TABS = [
 
 export default function App() {
   const { runners, loading, error, reload, applyUpdate } = useRunners()
+  const { theme, toggleTheme } = useTheme()
   const [activeTab, setActiveTab] = useState('dashboard')
   const [query, setQuery] = useState('')
 
@@ -48,6 +50,13 @@ export default function App() {
         </div>
         <div className="header-actions">
           {CONFIG.useMock && <span className="badge badge-demo">Modo demo</span>}
+          <button
+            className="theme-toggle"
+            onClick={toggleTheme}
+            aria-label={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+          >
+            {theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
+          </button>
           <button className="reload" onClick={reload} disabled={loading}>
             Recargar
           </button>
