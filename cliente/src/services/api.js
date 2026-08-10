@@ -1,12 +1,21 @@
 import { mockRunners } from '../data/mockRunners.js'
 
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
-export const USE_MOCK_DATA = true
+export const USE_MOCK_DATA = false
 
 export const ENDPOINTS = {
-  runners: '/api/runners',
-  times: '/api/times',
+  runners: '/runners',
+  results: '/results',
+  events: '/events',
+}
+
+function mapRunner(runner, timestamp) {
+  return {
+    id: runner.runner_id,
+    name: runner.name,
+    timestamp,
+  }
 }
 
 export class ApiConnectionError extends Error {
@@ -29,13 +38,30 @@ export async function getRunners() {
   }
 
   try {
-    const response = await fetch(`${API_URL}${ENDPOINTS.runners}`)
+    const [runnersResponse, resultsResponse] = await Promise.all([
+      fetch(`${API_URL}${ENDPOINTS.runners}`),
+      fetch(`${API_URL}${ENDPOINTS.results}`),
+    ])
 
-    if (!response.ok) {
+    if (!runnersResponse.ok) {
       throw new ApiError('No se pudieron cargar los corredores.')
     }
+    if (!resultsResponse.ok) {
+      throw new ApiError('No se pudieron cargar los resultados.')
+    }
 
-    return await response.json()
+    const { runners } = await runnersResponse.json()
+    const { results } = await resultsResponse.json()
+
+    const timestampsByRunnerId = new Map(
+      results
+        .filter((result) => result.timestamp != null)
+        .map((result) => [result.runner_id, result.timestamp]),
+    )
+
+    return runners.map((runner) =>
+      mapRunner(runner, timestampsByRunnerId.get(runner.runner_id) ?? null),
+    )
   } catch (error) {
     if (error instanceof ApiError) {
       throw error
@@ -44,18 +70,18 @@ export async function getRunners() {
   }
 }
 
-export async function registerTime(runner) {
+export async function sendEvent({ runner_id, timestamp }) {
   if (USE_MOCK_DATA) {
-    return { ...runner }
+    return { status: 'queued' }
   }
 
   try {
-    const response = await fetch(`${API_URL}${ENDPOINTS.times}`, {
+    const response = await fetch(`${API_URL}${ENDPOINTS.events}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(runner),
+      body: JSON.stringify({ source: 'manual', runner_id, timestamp }),
     })
 
     if (!response.ok) {
@@ -67,8 +93,7 @@ export async function registerTime(runner) {
       throw new ApiError(message)
     }
 
-    const body = await response.json().catch(() => null)
-    return body ?? { ...runner }
+    return await response.json()
   } catch (error) {
     if (error instanceof ApiError) {
       throw error

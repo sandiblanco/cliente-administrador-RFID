@@ -1,29 +1,49 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import RunnerInput from './components/RunnerInput.jsx'
 import RunnerGrid from './components/RunnerGrid.jsx'
-import { getRunners, registerTime, ApiConnectionError } from './services/api.js'
-import { connectSocket, disconnectSocket, onRunnerFinished } from './services/socket.js'
+import { getRunners, sendEvent, ApiConnectionError } from './services/api.js'
+import {
+  connectSocket,
+  disconnectSocket,
+  onRunnerFinished,
+  offRunnerFinished,
+} from './services/socket.js'
+
+const CONFIRM_TIMEOUT_MS = 10000
 
 export default function App() {
   const [runners, setRunners] = useState([])
   const [pendingIds, setPendingIds] = useState([])
   const [error, setError] = useState(null)
+  const pendingTimers = useRef({})
 
   function showError(message, type = 'validation') {
     setError({ message, type })
   }
 
-  function handleRunnerFinished({ id, timestamp }) {
+  function clearPendingTimer(runnerId) {
+    const timer = pendingTimers.current[runnerId]
+    if (timer) {
+      clearTimeout(timer)
+      delete pendingTimers.current[runnerId]
+    }
+  }
+
+  function handleRunnerFinished({ runner_id, timestamp }) {
     setRunners((prev) =>
       prev.map((runner) =>
-        runner.id === id && runner.timestamp === null
+        runner.id === runner_id && runner.timestamp === null
           ? { ...runner, timestamp }
           : runner,
       ),
     )
+    clearPendingTimer(runner_id)
+    setPendingIds((prev) => prev.filter((pendingId) => pendingId !== runner_id))
   }
 
   useEffect(() => {
+    const timers = pendingTimers.current
+
     connectSocket()
     onRunnerFinished(handleRunnerFinished)
 
@@ -39,18 +59,21 @@ export default function App() {
 
     return () => {
       disconnectSocket()
+      offRunnerFinished()
+      Object.values(timers).forEach((timer) => clearTimeout(timer))
     }
   }, [])
 
   const handleSubmit = useCallback(async (rawId) => {
     setError(null)
 
-    if (!/^\d+$/.test(rawId)) {
-      showError('Introduce un ID numérico válido.')
+    const id = String(rawId ?? '').trim()
+
+    if (!id) {
+      showError('Introduce un ID válido.')
       return
     }
 
-    const id = Number(rawId)
     const runner = runners.find((runner) => runner.id === id)
 
     if (!runner) {
@@ -71,21 +94,22 @@ export default function App() {
     setPendingIds((prev) => [...prev, id])
 
     try {
-      const confirmed = await registerTime({ ...runner, timestamp })
-      setRunners((prev) =>
-        prev.map((r) =>
-          r.id === id
-            ? { ...r, timestamp: confirmed.timestamp ?? timestamp }
-            : r,
-        ),
-      )
+      await sendEvent({ runner_id: id, timestamp })
+
+      pendingTimers.current[id] = setTimeout(() => {
+        setPendingIds((prev) => prev.filter((pendingId) => pendingId !== id))
+        delete pendingTimers.current[id]
+        showError(
+          `El servidor no confirmó el registro del corredor ${id}.`,
+          'server',
+        )
+      }, CONFIRM_TIMEOUT_MS)
     } catch (error) {
       if (error instanceof ApiConnectionError) {
         showError(error.message, 'connection')
       } else {
         showError(error.message, 'server')
       }
-    } finally {
       setPendingIds((prev) => prev.filter((pendingId) => pendingId !== id))
     }
   }, [runners, pendingIds])

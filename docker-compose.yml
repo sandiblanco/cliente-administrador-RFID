@@ -1,0 +1,17 @@
+services:
+  cliente:
+    build:
+      context: ./cliente
+      args:
+        VITE_API_URL: http://localhost:8000
+        VITE_SOCKET_URL: ws://localhost:8000/ws/live
+    ports:
+      - "8080:80"
+
+  administrador:
+    build:
+      context: ./administrador
+      args:
+        VITE_SERVER_URL: http://localhost:3000
+    ports:
+      - "8081:80"
