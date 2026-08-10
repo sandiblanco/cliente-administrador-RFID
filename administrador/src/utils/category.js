@@ -42,7 +42,7 @@ export function formatCategoryLabel(runner) {
 }
 
 // Las 8 modalidades premiadas: subcategoría × género, dentro del 10K.
-const PODIUM_GROUPS = SUBCATEGORIES.flatMap((subcategory) =>
+export const PODIUM_GROUPS = SUBCATEGORIES.flatMap((subcategory) =>
   GENDERS.map((gender) => ({
     id: `10k-${subcategory.value}-${gender.value}`,
     label: `${subcategory.label} · ${gender.label}`,

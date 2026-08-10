@@ -29,6 +29,11 @@ const RECONNECT_BASE_DELAY_MS = 1000
 const RECONNECT_MAX_DELAY_MS = 30000
 
 const listeners = new Set()
+// Suscriptores del feed de actividad: reciben el mensaje tal cual llega del
+// servidor (sin pasar por mapMessage), porque el log necesita campos que
+// mapMessage no expone a los consumidores de `runners` (type, corrected,
+// source, elapsed_display).
+const activityListeners = new Set()
 
 let socket = null
 let simulator = null
@@ -63,6 +68,10 @@ function emit(runner) {
   listeners.forEach((handler) => handler(runner))
 }
 
+function emitActivity(raw) {
+  activityListeners.forEach((handler) => handler(raw))
+}
+
 function scheduleReconnect(attempt) {
   if (disconnected) {
     return
@@ -92,6 +101,7 @@ function openSocket(attempt = 0) {
     }
     if (data.runner_id != null) {
       emit(mapMessage(data))
+      emitActivity(data)
     }
   }
 
@@ -146,5 +156,14 @@ export function onLiveUpdate(handler) {
       stopSimulator(simulator)
       simulator = null
     }
+  }
+}
+
+export function onActivity(handler) {
+  activityListeners.add(handler)
+  connect()
+
+  return () => {
+    activityListeners.delete(handler)
   }
 }

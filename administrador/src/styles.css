@@ -256,6 +256,227 @@ input:focus-visible {
   opacity: 0.6;
 }
 
+.section-title {
+  margin: 4px 0 0;
+  padding-bottom: 10px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: var(--hairline) dashed var(--c-ink-faint);
+}
+
+/* ---------- Dashboard: layout con el log de actividad como sidebar ---------- */
+
+.dashboard-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  align-items: start;
+  gap: 20px;
+}
+
+.dashboard-main {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-width: 0;
+}
+
+@media (max-width: 860px) {
+  .dashboard-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Podio ---------- */
+
+.podium-board {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.podium-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 14px;
+}
+
+.podium-card {
+  background: var(--c-bg-raised);
+  border: var(--border-w) solid var(--c-ink);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+
+.podium-card-title {
+  margin: 0 0 10px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--c-ink-soft);
+}
+
+.podium-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.podium-place {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 8px;
+  border: var(--hairline) solid var(--c-ink-faint);
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+}
+
+.podium-place-1 {
+  border: var(--hairline) solid var(--c-ink);
+  background: color-mix(in srgb, var(--c-ink) 8%, transparent);
+  font-weight: 700;
+}
+
+.podium-rank {
+  min-width: 1.9em;
+  color: var(--c-ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+
+.podium-place-1 .podium-rank {
+  color: var(--c-ink);
+}
+
+.podium-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.podium-empty {
+  color: var(--c-ink-faint);
+}
+
+.podium-time {
+  color: var(--c-ink-soft);
+  font-size: 0.82rem;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Log de actividad: cuadro vertical con scroll propio ---------- */
+
+.activity-log {
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+  max-height: calc(100vh - 200px);
+  background: var(--c-bg-raised);
+  border: var(--border-w) solid var(--c-ink);
+  border-radius: var(--radius);
+  position: sticky;
+  top: 20px;
+}
+
+.activity-log-title {
+  margin: 0;
+  padding: 12px 14px;
+  background: var(--c-ink);
+  color: var(--c-bg);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.activity-log-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.activity-log-empty {
+  margin: 0;
+  padding: 8px 4px;
+  color: var(--c-ink-soft);
+  font-size: 0.85rem;
+}
+
+.activity-entry {
+  padding: 8px 10px;
+  border: var(--hairline) solid var(--c-ink-faint);
+  border-radius: var(--radius);
+  animation: activity-entry-in 0.2s ease;
+}
+
+@keyframes activity-entry-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.activity-entry-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 3px;
+}
+
+.activity-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--c-ink-soft);
+}
+
+.activity-time {
+  flex-shrink: 0;
+  color: var(--c-ink-faint);
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.activity-text {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--c-ink);
+  overflow-wrap: break-word;
+}
+
+.activity-finish {
+  border-left: 3px solid var(--c-green);
+}
+
+.activity-finish .activity-tag {
+  color: var(--c-green);
+}
+
+.activity-corrected {
+  border-left: 3px solid var(--c-black);
+}
+
+.activity-runner {
+  border-left: 3px solid var(--c-ink-faint);
+}
+
 /* ---------- Búsqueda ---------- */
 
 .search-bar {

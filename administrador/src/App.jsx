@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useRunners } from './hooks/useRunners'
 import { useTheme } from './hooks/useTheme'
+import { useActivityLog } from './hooks/useActivityLog'
 import { updateResultTime } from './api/client'
 import CONFIG from './config'
 import Dashboard from './components/Dashboard'
@@ -18,6 +19,7 @@ const TABS = [
 export default function App() {
   const { runners, loading, error, reload, applyUpdate } = useRunners()
   const { theme, toggleTheme } = useTheme()
+  const activityLog = useActivityLog()
   const [activeTab, setActiveTab] = useState('dashboard')
   const [query, setQuery] = useState('')
 
@@ -83,7 +85,9 @@ export default function App() {
 
       {loading && <p className="loading">Cargando datos…</p>}
 
-      {!loading && activeTab === 'dashboard' && <Dashboard runners={runners} />}
+      {!loading && activeTab === 'dashboard' && (
+        <Dashboard runners={runners} activityLog={activityLog} />
+      )}
 
       {!loading && activeTab === 'runners' && (
         <section>
