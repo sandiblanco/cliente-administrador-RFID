@@ -4,6 +4,7 @@ import { updateResultTime } from './api/client'
 import CONFIG from './config'
 import Dashboard from './components/Dashboard'
 import RunnerTable from './components/RunnerTable'
+import ResultsPanel from './components/ResultsPanel'
 import SearchBar from './components/SearchBar'
 import { filterRunners } from './utils/search'
 
@@ -27,16 +28,11 @@ export default function App() {
       id: res.result.runner_id,
       name: res.result.name,
       timestamp: res.result.timestamp,
+      category: res.result.category,
+      subcategory: res.result.subcategory,
+      gender: res.result.gender,
     })
   }
-
-  const results = useMemo(
-    () =>
-      runners
-        .filter((r) => r.timestamp)
-        .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp)),
-    [runners]
-  )
 
   const filteredRunners = useMemo(
     () => filterRunners(runners, query),
@@ -86,17 +82,14 @@ export default function App() {
               query.trim() ? 'Sin resultados para la búsqueda' : 'Sin corredores'
             }
             onEditTime={handleEditTime}
+            showCategory
           />
         </section>
       )}
 
       {!loading && activeTab === 'results' && (
         <section>
-          <RunnerTable
-            runners={results}
-            emptyMessage="Aún no hay corredores finalizados"
-            onEditTime={handleEditTime}
-          />
+          <ResultsPanel runners={runners} onEditTime={handleEditTime} />
         </section>
       )}
     </div>

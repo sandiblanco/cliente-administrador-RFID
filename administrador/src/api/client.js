@@ -20,6 +20,9 @@ function mapRunner(runner, timestamp) {
     id: runner.runner_id,
     name: runner.name,
     timestamp,
+    category: runner.category,
+    subcategory: runner.subcategory,
+    gender: runner.gender,
   }
 }
 

@@ -1,9 +1,16 @@
 import { useState } from 'react'
 import { formatTime } from '../utils/formatTime'
 import { STATUS, getStatus } from '../utils/status'
+import { formatCategoryLabel } from '../utils/category'
 import EditTimeModal from './EditTimeModal'
 
-export default function RunnerTable({ runners, emptyMessage = 'Sin corredores', onEditTime }) {
+export default function RunnerTable({
+  runners,
+  emptyMessage = 'Sin corredores',
+  onEditTime,
+  showCategory = false,
+  showRank = false,
+}) {
   const [editingRunner, setEditingRunner] = useState(null)
 
   if (runners.length === 0) {
@@ -20,18 +27,22 @@ export default function RunnerTable({ runners, emptyMessage = 'Sin corredores', 
       <table>
         <thead>
           <tr>
+            {showRank && <th>Puesto</th>}
             <th>ID</th>
             <th>Nombre</th>
+            {showCategory && <th>Categoría</th>}
             <th>Tiempo</th>
             <th>Estado</th>
             {onEditTime && <th>Acciones</th>}
           </tr>
         </thead>
         <tbody>
-          {runners.map((runner) => (
+          {runners.map((runner, index) => (
             <tr key={runner.id}>
+              {showRank && <td>{index + 1}</td>}
               <td>{runner.id}</td>
               <td>{runner.name}</td>
+              {showCategory && <td>{formatCategoryLabel(runner)}</td>}
               <td>{formatTime(runner.timestamp)}</td>
               <td>
                 <span className={`badge ${statusClass(runner)}`}>

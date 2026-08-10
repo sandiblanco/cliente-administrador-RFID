@@ -34,6 +34,9 @@ function mapMessage(raw) {
     timestamp: raw.timestamp,
     elapsedSeconds: raw.elapsed_seconds,
     elapsedDisplay: raw.elapsed_display,
+    category: raw.category,
+    subcategory: raw.subcategory,
+    gender: raw.gender,
   }
 }
 

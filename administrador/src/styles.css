@@ -141,6 +141,35 @@ body {
   border-color: transparent;
 }
 
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filter-btn {
+  background: var(--panel);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 6px 14px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.filter-btn:hover {
+  background: var(--panel-2);
+  color: var(--text);
+}
+
+.filter-btn-active {
+  background: var(--accent);
+  color: #082f49;
+  border-color: var(--accent);
+  font-weight: 600;
+}
+
 .table-wrapper {
   overflow-x: auto;
   background: var(--panel);
