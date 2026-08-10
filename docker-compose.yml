@@ -4,7 +4,7 @@ services:
       context: ./cliente
       args:
         VITE_API_URL: http://172.24.160.5:8000
-        VITE_SOCKET_URL: ws://172.24.160.6:8000/ws/live
+        VITE_SOCKET_URL: ws://172.24.160.5:8000/ws/live
     container_name: rfid-cliente
     restart: unless-stopped
     ports:
@@ -16,7 +16,7 @@ services:
       context: ./administrador
       args:
         VITE_SERVER_URL: http://172.24.160.5:8000
-        VITE_SOCKET_URL: ws://172.24.160.6:8000/ws/live
+        VITE_SOCKET_URL: ws://172.24.160.5:8000/ws/live
     container_name: rfid-administrador
     restart: unless-stopped
     ports:
