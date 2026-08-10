@@ -7,6 +7,8 @@ import {
   disconnectSocket,
   onRunnerFinished,
   offRunnerFinished,
+  onRunnerUpdated,
+  offRunnerUpdated,
 } from './services/socket.js'
 
 const CONFIRM_TIMEOUT_MS = 10000
@@ -47,6 +49,22 @@ export default function App() {
     setPendingIds((prev) => prev.filter((pendingId) => pendingId !== runner_id))
   }
 
+  // Alta o edición de un corredor (nombre/categoría/etc, sin relación con
+  // su tiempo). Nunca toca `timestamp`: si el corredor ya existía, solo
+  // actualiza su nombre; si es nuevo, lo agrega como pendiente para poder
+  // registrarlo sin recargar la página.
+  function handleRunnerUpdated({ runner_id, name }) {
+    setRunners((prev) => {
+      const exists = prev.some((runner) => runner.id === runner_id)
+      if (exists) {
+        return prev.map((runner) =>
+          runner.id === runner_id ? { ...runner, name } : runner,
+        )
+      }
+      return [...prev, { id: runner_id, name, timestamp: null }]
+    })
+  }
+
   function pollRunners() {
     getRunners()
       .then((loadedRunners) => {
@@ -71,6 +89,7 @@ export default function App() {
 
     connectSocket()
     onRunnerFinished(handleRunnerFinished)
+    onRunnerUpdated(handleRunnerUpdated)
 
     getRunners()
       .then((loadedRunners) => setRunners(loadedRunners))
@@ -87,6 +106,7 @@ export default function App() {
     return () => {
       disconnectSocket()
       offRunnerFinished()
+      offRunnerUpdated()
       clearInterval(pollTimer)
       Object.values(timers).forEach((timer) => clearTimeout(timer))
     }

@@ -1,10 +1,6 @@
 // Capa de comunicación por WebSocket.
 //
-// El servidor publica dos tipos de mensaje, distinguibles por `type`. Esta
-// app solo le interesa el de llegada — el de alta/edición de corredor
-// (type: "runner") se ignora a propósito: no trae timestamp, y tratarlo
-// como si fuera una llegada podría "confirmar" de forma falsa a un
-// corredor pendiente que en realidad solo se editó (nombre/categoría/etc).
+// El servidor publica dos tipos de mensaje, distinguibles por `type`:
 //
 // type: "result" — un corredor registró su llegada (RFID/manual) o un
 // admin corrigió su tiempo:
@@ -16,12 +12,19 @@
 //   elapsed_seconds: 5412.0,
 //   elapsed_display: "1:30:12"
 // }
+//
+// type: "runner" — se dio de alta o se editó un corredor (nombre/
+// categoría/etc). No trae timestamp: nunca hay que tratarlo como una
+// llegada, o "confirmaría" de forma falsa a un corredor pendiente que en
+// realidad solo se editó. Va a un handler separado (onRunnerUpdated).
+// { type: "runner", runner_id: "34", name: "...", category: "10K", ... }
 
 export const SOCKET_URL =
   import.meta.env.VITE_SOCKET_URL || 'ws://localhost:8000/ws/live'
 
 let _socket = null
 let _runnerFinishedHandler = null
+let _runnerUpdatedHandler = null
 let _reconnectTimer = null
 let _disconnected = false
 
@@ -29,10 +32,6 @@ const RECONNECT_BASE_DELAY_MS = 1000
 const RECONNECT_MAX_DELAY_MS = 30000
 
 function handleMessage(event) {
-  if (!_runnerFinishedHandler) {
-    return
-  }
-
   let data
   try {
     data = JSON.parse(event.data)
@@ -40,14 +39,24 @@ function handleMessage(event) {
     return
   }
 
-  if (data.runner_id != null && data.type !== 'runner') {
-    _runnerFinishedHandler({
-      runner_id: data.runner_id,
-      timestamp: data.timestamp,
-      elapsed_seconds: data.elapsed_seconds,
-      elapsed_display: data.elapsed_display,
-    })
+  if (data.runner_id == null) {
+    return
   }
+
+  if (data.type === 'runner') {
+    _runnerUpdatedHandler?.({
+      runner_id: data.runner_id,
+      name: data.name,
+    })
+    return
+  }
+
+  _runnerFinishedHandler?.({
+    runner_id: data.runner_id,
+    timestamp: data.timestamp,
+    elapsed_seconds: data.elapsed_seconds,
+    elapsed_display: data.elapsed_display,
+  })
 }
 
 function scheduleReconnect(attempt) {
@@ -111,4 +120,12 @@ export function onRunnerFinished(handler) {
 
 export function offRunnerFinished() {
   _runnerFinishedHandler = null
+}
+
+export function onRunnerUpdated(handler) {
+  _runnerUpdatedHandler = handler
+}
+
+export function offRunnerUpdated() {
+  _runnerUpdatedHandler = null
 }
