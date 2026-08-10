@@ -15,8 +15,42 @@ async function request(url, options) {
   return res.json()
 }
 
+function mapRunner(runner, timestamp) {
+  return {
+    id: runner.runner_id,
+    name: runner.name,
+    timestamp,
+  }
+}
+
 export async function getRunners() {
-  return request(CONFIG.http.runners)
+  if (CONFIG.useMock) {
+    return request(CONFIG.http.runners)
+  }
+
+  const [runnersRes, resultsRes] = await Promise.all([
+    fetch(CONFIG.http.runners),
+    fetch(CONFIG.http.results),
+  ])
+  if (!runnersRes.ok) {
+    throw new Error(`Error del servidor (${runnersRes.status})`)
+  }
+  if (!resultsRes.ok) {
+    throw new Error(`Error del servidor (${resultsRes.status})`)
+  }
+
+  const { runners } = await runnersRes.json()
+  const { results } = await resultsRes.json()
+
+  const timestampsByRunnerId = new Map(
+    results
+      .filter((result) => result.timestamp != null)
+      .map((result) => [result.runner_id, result.timestamp])
+  )
+
+  return runners.map((runner) =>
+    mapRunner(runner, timestampsByRunnerId.get(runner.runner_id) ?? null)
+  )
 }
 
 export async function getResults() {

@@ -6,15 +6,16 @@ const SERVER_URL =
 
 const CONFIG = {
   serverUrl: SERVER_URL,
-  useMock: true,
+  useMock: false,
   mock: {
     intervalMs: 6000,
   },
   http: {
-    runners: `${SERVER_URL}/api/runners`,
-    results: `${SERVER_URL}/api/results`,
+    runners: `${SERVER_URL}/runners`,
+    results: `${SERVER_URL}/results`,
   },
   socket: {
+    socketURL: import.meta.env.VITE_SOCKET_URL || 'ws://localhost:3000/ws/live',
     eventRunnerFinished: 'runner:finished',
   },
 }

@@ -56,9 +56,14 @@ function scheduleReconnect(attempt) {
 }
 
 export function connectSocket(attempt = 0) {
-  if (_disconnected) {
-    return
-  }
+  // Calling connect always means "we want to be connected again", so it
+  // must clear a previous disconnectSocket() call. Without this, React's
+  // StrictMode double-invoke of effects in development (mount -> cleanup
+  // -> mount) calls disconnectSocket() once before the real mount, which
+  // permanently latches _disconnected = true and silently no-ops every
+  // future connectSocket() call for the lifetime of the page.
+  _disconnected = false
+
   if (_socket) {
     _socket.close()
   }
