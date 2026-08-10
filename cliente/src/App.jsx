@@ -37,12 +37,14 @@ export default function App() {
     }
   }
 
+  // Llegada nueva o corrección de un tiempo ya registrado — ambas viajan
+  // por el mismo evento. No hay que exigir timestamp === null: eso
+  // impediría que una corrección se refleje (se descartaría en silencio
+  // hasta el próximo refresco de fondo).
   function handleRunnerFinished({ runner_id, timestamp }) {
     setRunners((prev) =>
       prev.map((runner) =>
-        runner.id === runner_id && runner.timestamp === null
-          ? { ...runner, timestamp }
-          : runner,
+        runner.id === runner_id ? { ...runner, timestamp } : runner,
       ),
     )
     clearPendingTimer(runner_id)
