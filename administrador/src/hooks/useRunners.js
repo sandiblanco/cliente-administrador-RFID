@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { getRunners } from '../api/client'
-import { onRunnerFinished } from '../socket/socket'
+import { onLiveUpdate } from '../socket/socket'
 
 // Red de seguridad ante un WebSocket que no llega a entregar mensajes (por
 // ejemplo, un reverse proxy que no reenvía el upgrade de conexión): sin
@@ -41,7 +41,7 @@ export function useRunners() {
   }, [load])
 
   useEffect(() => {
-    const unsubscribe = onRunnerFinished((runner) => {
+    const unsubscribe = onLiveUpdate((runner) => {
       setRunners((prev) => mergeRunner(prev, runner))
     })
     return unsubscribe

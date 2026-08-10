@@ -1,14 +1,22 @@
 // Capa de comunicación por WebSocket.
 //
-// El servidor publica un mensaje cada vez que un corredor registra su
-// llegada (por RFID o manual):
-// {
-//   runner_id: "34",
-//   name: "Carlos Rodríguez",
-//   timestamp: "2026-08-09T13:42:31.000Z",
-//   elapsed_seconds: 5412.0,
-//   elapsed_display: "1:30:12"
-// }
+// El servidor publica dos tipos de mensaje, distinguibles por `type`:
+//
+// - type: "result" — un corredor registró su llegada (RFID/manual) o un
+//   admin corrigió su tiempo:
+//   {
+//     type: "result",
+//     runner_id: "34",
+//     name: "Carlos Rodríguez",
+//     timestamp: "2026-08-09T13:42:31.000Z",
+//     elapsed_seconds: 5412.0,
+//     elapsed_display: "1:30:12"
+//   }
+//
+// - type: "runner" — se creó o editó un corredor (sin relación con su
+//   tiempo). No trae timestamp/elapsed_*: si los trajera en null, un merge
+//   por spread pisaría el tiempo ya registrado de ese corredor.
+//   { type: "runner", runner_id: "34", name: "...", category: "10K", ... }
 //
 // Nota: es un WebSocket nativo, no Socket.IO. No usar socket.io-client acá:
 // intenta un handshake por HTTP polling a /socket.io/ que este servidor no
@@ -28,15 +36,26 @@ let reconnectTimer = null
 let disconnected = false
 
 function mapMessage(raw) {
-  return {
+  const runner = {
     id: raw.runner_id,
     name: raw.name,
-    timestamp: raw.timestamp,
-    elapsedSeconds: raw.elapsed_seconds,
-    elapsedDisplay: raw.elapsed_display,
     category: raw.category,
     subcategory: raw.subcategory,
     gender: raw.gender,
+  }
+
+  // type: "runner" no trae timestamp/elapsed_*: si se incluyeran igual
+  // (aunque fuera con valor null/undefined), el merge por spread
+  // pisaría el tiempo ya registrado de ese corredor.
+  if (raw.type === 'runner') {
+    return runner
+  }
+
+  return {
+    ...runner,
+    timestamp: raw.timestamp,
+    elapsedSeconds: raw.elapsed_seconds,
+    elapsedDisplay: raw.elapsed_display,
   }
 }
 
@@ -117,7 +136,7 @@ export function disconnect() {
   }
 }
 
-export function onRunnerFinished(handler) {
+export function onLiveUpdate(handler) {
   listeners.add(handler)
   connect()
 

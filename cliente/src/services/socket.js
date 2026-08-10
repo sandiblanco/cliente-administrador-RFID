@@ -1,8 +1,15 @@
 // Capa de comunicación por WebSocket.
 //
-// El servidor publica un evento en "live_results" cada vez que un corredor
-// registra su llegada (por RFID o manual) y lo reenvía por el socket:
+// El servidor publica dos tipos de mensaje, distinguibles por `type`. Esta
+// app solo le interesa el de llegada — el de alta/edición de corredor
+// (type: "runner") se ignora a propósito: no trae timestamp, y tratarlo
+// como si fuera una llegada podría "confirmar" de forma falsa a un
+// corredor pendiente que en realidad solo se editó (nombre/categoría/etc).
+//
+// type: "result" — un corredor registró su llegada (RFID/manual) o un
+// admin corrigió su tiempo:
 // {
+//   type: "result",
 //   runner_id: "34",
 //   name: "Carlos Rodríguez",
 //   timestamp: "2026-08-09T13:42:31.000Z",
@@ -33,7 +40,7 @@ function handleMessage(event) {
     return
   }
 
-  if (data.runner_id != null) {
+  if (data.runner_id != null && data.type !== 'runner') {
     _runnerFinishedHandler({
       runner_id: data.runner_id,
       timestamp: data.timestamp,
