@@ -2,6 +2,11 @@ import { useCallback, useEffect, useState } from 'react'
 import { getRunners } from '../api/client'
 import { onRunnerFinished } from '../socket/socket'
 
+// Red de seguridad ante un WebSocket que no llega a entregar mensajes (por
+// ejemplo, un reverse proxy que no reenvía el upgrade de conexión): sin
+// esto, los cambios solo se ven al recargar la página a mano.
+const POLL_INTERVAL_MS = 10000
+
 function mergeRunner(list, incoming) {
   const existing = list.find((r) => r.id === incoming.id)
   if (existing) {
@@ -31,6 +36,8 @@ export function useRunners() {
 
   useEffect(() => {
     load()
+    const pollTimer = setInterval(load, POLL_INTERVAL_MS)
+    return () => clearInterval(pollTimer)
   }, [load])
 
   useEffect(() => {

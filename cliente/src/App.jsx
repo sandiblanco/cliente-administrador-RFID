@@ -11,6 +11,12 @@ import {
 
 const CONFIRM_TIMEOUT_MS = 10000
 
+// Red de seguridad ante un WebSocket que no llega a entregar mensajes (por
+// ejemplo, un reverse proxy que no reenvía el upgrade de conexión): sin
+// esto, los tiempos quedan "Registrando..." para siempre y los cambios de
+// otros asistentes solo se ven al recargar la página a mano.
+const POLL_INTERVAL_MS = 10000
+
 export default function App() {
   const [runners, setRunners] = useState([])
   const [pendingIds, setPendingIds] = useState([])
@@ -41,6 +47,25 @@ export default function App() {
     setPendingIds((prev) => prev.filter((pendingId) => pendingId !== runner_id))
   }
 
+  function pollRunners() {
+    getRunners()
+      .then((loadedRunners) => {
+        setRunners(loadedRunners)
+        // Si el socket no avisó, esto igual destraba los "Registrando...".
+        loadedRunners
+          .filter((runner) => runner.timestamp !== null)
+          .forEach((runner) =>
+            handleRunnerFinished({
+              runner_id: runner.id,
+              timestamp: runner.timestamp,
+            }),
+          )
+      })
+      .catch(() => {
+        // Silencioso: es un refresco de fondo, el próximo intento reintenta.
+      })
+  }
+
   useEffect(() => {
     const timers = pendingTimers.current
 
@@ -57,9 +82,12 @@ export default function App() {
         }
       })
 
+    const pollTimer = setInterval(pollRunners, POLL_INTERVAL_MS)
+
     return () => {
       disconnectSocket()
       offRunnerFinished()
+      clearInterval(pollTimer)
       Object.values(timers).forEach((timer) => clearTimeout(timer))
     }
   }, [])

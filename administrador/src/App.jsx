@@ -42,7 +42,10 @@ export default function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>Administrador · Control de tiempos</h1>
+        <div>
+          <h1>Administrador · Control de tiempos</h1>
+          <p className="header-eyebrow">Sistema RFID // Carrera del Informático 2026</p>
+        </div>
         <div className="header-actions">
           {CONFIG.useMock && <span className="badge badge-demo">Modo demo</span>}
           <button className="reload" onClick={reload} disabled={loading}>

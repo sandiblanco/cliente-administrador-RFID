@@ -39,10 +39,18 @@ export default function RunnerTable({
         <tbody>
           {runners.map((runner, index) => (
             <tr key={runner.id}>
-              {showRank && <td>{index + 1}</td>}
+              {showRank && (
+                <td>
+                  <span className="rank">{index + 1}</span>
+                </td>
+              )}
               <td>{runner.id}</td>
               <td>{runner.name}</td>
-              {showCategory && <td>{formatCategoryLabel(runner)}</td>}
+              {showCategory && (
+                <td>
+                  <span className="tag">{formatCategoryLabel(runner)}</span>
+                </td>
+              )}
               <td>{formatTime(runner.timestamp)}</td>
               <td>
                 <span className={`badge ${statusClass(runner)}`}>
