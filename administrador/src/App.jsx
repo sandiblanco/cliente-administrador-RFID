@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useRunners } from './hooks/useRunners'
+import { updateResultTime } from './api/client'
 import CONFIG from './config'
 import Dashboard from './components/Dashboard'
 import RunnerTable from './components/RunnerTable'
@@ -13,9 +14,21 @@ const TABS = [
 ]
 
 export default function App() {
-  const { runners, loading, error, reload } = useRunners()
+  const { runners, loading, error, reload, applyUpdate } = useRunners()
   const [activeTab, setActiveTab] = useState('dashboard')
   const [query, setQuery] = useState('')
+
+  const handleEditTime = async (runnerId, timestamp) => {
+    const res = await updateResultTime(runnerId, timestamp)
+    if (res.status !== 'ok') {
+      throw new Error(res.message || 'No se pudo actualizar el tiempo')
+    }
+    applyUpdate({
+      id: res.result.runner_id,
+      name: res.result.name,
+      timestamp: res.result.timestamp,
+    })
+  }
 
   const results = useMemo(
     () =>
@@ -72,6 +85,7 @@ export default function App() {
             emptyMessage={
               query.trim() ? 'Sin resultados para la búsqueda' : 'Sin corredores'
             }
+            onEditTime={handleEditTime}
           />
         </section>
       )}
@@ -81,6 +95,7 @@ export default function App() {
           <RunnerTable
             runners={results}
             emptyMessage="Aún no hay corredores finalizados"
+            onEditTime={handleEditTime}
           />
         </section>
       )}

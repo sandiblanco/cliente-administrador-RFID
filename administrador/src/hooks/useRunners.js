@@ -40,5 +40,9 @@ export function useRunners() {
     return unsubscribe
   }, [])
 
-  return { runners, loading, error, reload: load }
+  const applyUpdate = useCallback((runner) => {
+    setRunners((prev) => mergeRunner(prev, runner))
+  }, [])
+
+  return { runners, loading, error, reload: load, applyUpdate }
 }

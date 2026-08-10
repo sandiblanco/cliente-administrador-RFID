@@ -78,3 +78,11 @@ export async function deleteRunner(id) {
     method: 'DELETE',
   })
 }
+
+export async function updateResultTime(id, timestamp) {
+  return request(`${CONFIG.http.results}/${id}/time`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ timestamp }),
+  })
+}
