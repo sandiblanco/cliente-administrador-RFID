@@ -35,7 +35,7 @@ export default function ActivityLog({ entries }) {
           entries.map((entry) => (
             <div key={entry.id} className={`activity-entry activity-${entry.kind}`}>
               <div className="activity-entry-head">
-                <span className="activity-tag">[ {entry.tag} ]</span>
+                <span className="activity-tag">{entry.tag}</span>
                 <span className="activity-time">{formatClock(entry.at)}</span>
               </div>
               <p className="activity-text">{entry.text}</p>

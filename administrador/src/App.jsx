@@ -8,6 +8,7 @@ import Dashboard from './components/Dashboard'
 import RunnerTable from './components/RunnerTable'
 import ResultsPanel from './components/ResultsPanel'
 import SearchBar from './components/SearchBar'
+import { AlertIcon, MoonIcon, ReloadIcon, SunIcon } from './components/icons'
 import { filterRunners } from './utils/search'
 
 const TABS = [
@@ -57,9 +58,11 @@ export default function App() {
             onClick={toggleTheme}
             aria-label={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
           >
+            {theme === 'dark' ? <SunIcon /> : <MoonIcon />}
             {theme === 'dark' ? 'Modo claro' : 'Modo oscuro'}
           </button>
           <button className="reload" onClick={reload} disabled={loading}>
+            <ReloadIcon />
             Recargar
           </button>
         </div>
@@ -79,7 +82,8 @@ export default function App() {
 
       {error && (
         <p className="error">
-          No se pudo obtener datos del servidor: {error}
+          <AlertIcon className="error-icon" />
+          <span>No se pudo obtener datos del servidor: {error}</span>
         </p>
       )}
 

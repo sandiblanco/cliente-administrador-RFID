@@ -1,0 +1,26 @@
+/* Mismo motivo de firma que el cliente: un trazo tipo "circuito" que
+   también se lee como ruta de carrera, detrás de la cabecera — el
+   único lugar decorativo de este panel, deliberadamente contenido. */
+
+.header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 100' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='0'%3E%3Cstop offset='0' stop-color='%23008FF5'/%3E%3Cstop offset='0.5' stop-color='%2300C9D8'/%3E%3Cstop offset='1' stop-color='%235BE3A5'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0,72 C80,24 160,92 240,42 S360,12 400,52' fill='none' stroke='url(%23g)' stroke-width='2'/%3E%3Ccircle cx='80' cy='40' r='3' fill='%2300C9D8'/%3E%3Ccircle cx='240' cy='42' r='3' fill='%235BE3A5'/%3E%3Ccircle cx='360' cy='20' r='3' fill='%23008FF5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right center;
+  background-size: 260px 100%;
+  opacity: 0.16;
+  animation: breathe 7s var(--ease) infinite alternate;
+}
+
+@keyframes breathe {
+  from {
+    opacity: 0.1;
+  }
+  to {
+    opacity: 0.22;
+  }
+}

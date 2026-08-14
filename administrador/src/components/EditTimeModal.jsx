@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { fromDatetimeLocalValue, toDatetimeLocalValue } from '../utils/datetimeLocal'
+import { AlertIcon } from './icons'
 
 export default function EditTimeModal({ runner, onSave, onClose }) {
   const [value, setValue] = useState(toDatetimeLocalValue(runner.timestamp))
@@ -52,7 +53,12 @@ export default function EditTimeModal({ runner, onSave, onClose }) {
             />
           </label>
 
-          {error && <p className="error modal-error">{error}</p>}
+          {error && (
+            <p className="error modal-error">
+              <AlertIcon className="error-icon" />
+              <span>{error}</span>
+            </p>
+          )}
 
           <div className="modal-actions">
             <button type="button" className="btn-secondary" onClick={onClose} disabled={saving}>

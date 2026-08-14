@@ -1,0 +1,129 @@
+/* ============================================================
+   Administrador · Control de tiempos
+   Identidad visual: Carrera del Informático — misma familia de marca
+   que el cliente de registro. Esta app sí tiene modo oscuro, así que
+   es donde el brief se expresa completo: fondo navy dominante,
+   acentos neón, glow suave. El modo claro usa el mismo tema "día"
+   del cliente, para que ambas apps se lean como el mismo producto.
+
+   Mecanismo de tema sin cambios: [data-theme] via useTheme.js — solo
+   se redefinen variables, la lógica de toggle queda intacta.
+   ============================================================ */
+
+@font-face {
+  font-family: 'Chakra Petch';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../assets/fonts/ChakraPetch-SemiBold.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+20AC, U+2122;
+}
+
+@font-face {
+  font-family: 'Chakra Petch';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/ChakraPetch-Bold.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+20AC, U+2122;
+}
+
+:root {
+  color-scheme: light;
+
+  /* -- Marca: paleta base de Carrera del Informático -- */
+  --navy-deep: #061a33;
+  --blue-dark: #0a2547;
+  --blue-electric: #008ff5;
+  --cyan-tech: #00c9d8;
+  --turquoise-neon: #00e6c3;
+  --mint: #5be3a5;
+  --white-cold: #f4f7fa;
+  --gray-blue: #9cb1c7;
+
+  /* -- Roles: tema día (por defecto en el toggle: oscuro — ver useTheme) -- */
+  --bg: var(--white-cold);
+  --surface: #ffffff;
+  --surface-sunken: #eaf0f6;
+  --border: rgba(156, 177, 199, 0.55);
+  --border-strong: rgba(156, 177, 199, 0.85);
+
+  --text: var(--blue-dark);
+  --text-muted: #4b6580;
+  --text-faint: #7e93ac;
+
+  /* La cabecera es navy fija en ambos temas — el ancla constante de
+     marca entre modo claro/oscuro y entre esta app y el cliente. */
+  --chrome-bg: var(--navy-deep);
+  --text-on-chrome: var(--white-cold);
+  --text-on-chrome-muted: #c7d3e0;
+
+  --accent-primary: var(--blue-electric);
+  --accent-secondary: var(--cyan-tech);
+  --accent-success: var(--turquoise-neon);
+  --accent-success-strong: var(--mint);
+  --accent-success-tint: rgba(91, 227, 165, 0.14);
+  --accent-neutral: var(--gray-blue);
+
+  /* Semántico — únicamente para errores reales de servidor/conexión. */
+  --accent-error: #b3261e;
+  --accent-error-bg: #fbebe9;
+
+  /* Resalte neutro de fila/hover — un tinte azul apenas perceptible,
+     sin pisar el significado de los acentos de estado. */
+  --row-hover: rgba(0, 143, 245, 0.05);
+
+  --focus-ring: var(--blue-electric);
+
+  /* Glow: solo tiene sentido sobre fondo oscuro — en claro queda
+     desactivado para que la interfaz se mantenga nítida. */
+  --glow-primary: none;
+  --glow-success: none;
+
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  --font-display: 'Chakra Petch', var(--font-body);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+
+  --shadow-card: 0 1px 2px rgba(10, 37, 71, 0.06), 0 1px 1px rgba(10, 37, 71, 0.04);
+  --shadow-chrome: 0 2px 12px rgba(6, 26, 51, 0.18);
+  --shadow-modal: 0 12px 40px rgba(6, 26, 51, 0.28);
+
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  font-family: var(--font-body);
+}
+
+/* Modo oscuro: fondo navy dominante, acentos neón a pleno — la
+   expresión más fiel del brief de marca. Mismo selector que ya usaba
+   la hoja anterior; useTheme.js no cambia. */
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --bg: var(--navy-deep);
+  --surface: #0d2440;
+  --surface-sunken: #051527;
+  --border: rgba(156, 177, 199, 0.22);
+  --border-strong: rgba(156, 177, 199, 0.4);
+
+  --text: var(--white-cold);
+  --text-muted: var(--gray-blue);
+  --text-faint: #5d7999;
+
+  --accent-success-tint: rgba(91, 227, 165, 0.1);
+  --row-hover: rgba(0, 143, 245, 0.08);
+
+  /* El rojo semántico se aclara para seguir contrastando sobre navy. */
+  --accent-error: #ff6b5d;
+  --accent-error-bg: rgba(255, 107, 93, 0.12);
+
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.15);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, 0.5);
+
+  --glow-primary: 0 0 0 3px rgba(0, 143, 245, 0.22), 0 0 16px rgba(0, 143, 245, 0.18);
+  --glow-success: 0 0 0 3px rgba(91, 227, 165, 0.2), 0 0 14px rgba(91, 227, 165, 0.16);
+}
