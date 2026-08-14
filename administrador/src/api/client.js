@@ -15,11 +15,12 @@ async function request(url, options) {
   return res.json()
 }
 
-function mapRunner(runner, timestamp) {
+function mapRunner(runner, timestamp, elapsedSeconds) {
   return {
     id: runner.runner_id,
     name: runner.name,
     timestamp,
+    elapsedSeconds,
     category: runner.category,
     subcategory: runner.subcategory,
     gender: runner.gender,
@@ -50,9 +51,21 @@ export async function getRunners() {
       .filter((result) => result.timestamp != null)
       .map((result) => [result.runner_id, result.timestamp])
   )
+  // Duración ya calculada por el servidor (hora_final - hora_inicio de la
+  // categoría, ver compute_elapsed en main.py) — se reutiliza tal cual en
+  // vez de recalcularla acá, para no duplicar esa lógica en el frontend.
+  const elapsedByRunnerId = new Map(
+    results
+      .filter((result) => result.elapsed_seconds != null)
+      .map((result) => [result.runner_id, result.elapsed_seconds])
+  )
 
   return runners.map((runner) =>
-    mapRunner(runner, timestampsByRunnerId.get(runner.runner_id) ?? null)
+    mapRunner(
+      runner,
+      timestampsByRunnerId.get(runner.runner_id) ?? null,
+      elapsedByRunnerId.get(runner.runner_id) ?? null
+    )
   )
 }
 

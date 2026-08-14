@@ -42,10 +42,12 @@ export default function App() {
   // por el mismo evento. No hay que exigir timestamp === null: eso
   // impediría que una corrección se refleje (se descartaría en silencio
   // hasta el próximo refresco de fondo).
-  function handleRunnerFinished({ runner_id, timestamp }) {
+  function handleRunnerFinished({ runner_id, timestamp, elapsed_seconds }) {
     setRunners((prev) =>
       prev.map((runner) =>
-        runner.id === runner_id ? { ...runner, timestamp } : runner,
+        runner.id === runner_id
+          ? { ...runner, timestamp, elapsedSeconds: elapsed_seconds ?? null }
+          : runner,
       ),
     )
     clearPendingTimer(runner_id)
@@ -79,6 +81,7 @@ export default function App() {
             handleRunnerFinished({
               runner_id: runner.id,
               timestamp: runner.timestamp,
+              elapsed_seconds: runner.elapsedSeconds,
             }),
           )
       })

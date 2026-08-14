@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { formatTime } from '../utils/formatTime'
+import { formatElapsed } from '../utils/formatElapsed'
 import { STATUS, getStatus } from '../utils/status'
 import { formatCategoryLabel } from '../utils/category'
 import EditTimeModal from './EditTimeModal'
@@ -55,7 +55,7 @@ export default function RunnerTable({
                   <span className="tag">{formatCategoryLabel(runner)}</span>
                 </td>
               )}
-              <td>{formatTime(runner.timestamp)}</td>
+              <td>{formatElapsed(runner.elapsedSeconds)}</td>
               <td>
                 <span className={`badge ${statusClass(runner)}`}>
                   {getStatus(runner)}

@@ -1,9 +1,9 @@
 // Conversión entre el timestamp "naive" (sin zona horaria) que usa el
 // servidor y el formato que espera un <input type="datetime-local">.
 //
-// El sistema guarda y muestra los timestamps tal cual, sin conversión de
-// zona horaria (ver formatTime.js), así que acá se evita cualquier paso por
-// Date/toISOString que introduciría 'Z' y corriera la hora.
+// El sistema guarda los timestamps tal cual, sin conversión de zona
+// horaria, así que acá se evita cualquier paso por Date/toISOString que
+// introduciría 'Z' y corriera la hora.
 
 export function toDatetimeLocalValue(timestamp) {
   if (!timestamp) {

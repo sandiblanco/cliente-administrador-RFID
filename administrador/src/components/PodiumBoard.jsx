@@ -1,4 +1,4 @@
-import { formatTime } from '../utils/formatTime'
+import { formatElapsed } from '../utils/formatElapsed'
 import { PODIUM_GROUPS } from '../utils/category'
 
 const PLACE_LABELS = ['1º', '2º', '3º']
@@ -29,7 +29,7 @@ export default function PodiumBoard({ runners }) {
                     {runner ? (
                       <>
                         <span className="podium-name">{runner.name}</span>
-                        <span className="podium-time">{formatTime(runner.timestamp)}</span>
+                        <span className="podium-time">{formatElapsed(runner.elapsedSeconds)}</span>
                       </>
                     ) : (
                       <span className="podium-name podium-empty">— sin definir —</span>
