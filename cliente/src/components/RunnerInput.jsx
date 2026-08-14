@@ -25,6 +25,7 @@ export default function RunnerInput({ onSubmit, disabled = false }) {
       <input
         ref={inputRef}
         type="text"
+        inputMode="numeric"
         value={value}
         placeholder="ID del corredor"
         onChange={(event) => setValue(event.target.value)}

@@ -1,3 +1,5 @@
+import { PendingIcon } from './icons.jsx'
+
 export default function RunnerCard({ runner, pending = false }) {
   const registered = runner.timestamp !== null
   const time = registered ? runner.timestamp.slice(11, 19) : null
@@ -11,7 +13,12 @@ export default function RunnerCard({ runner, pending = false }) {
       {!registered && (
         <div className="runner-time unregistered">Sin registrar</div>
       )}
-      {pending && <div className="runner-pending">Registrando...</div>}
+      {pending && (
+        <div className="runner-pending">
+          <PendingIcon className="runner-pending-icon" />
+          Registrando...
+        </div>
+      )}
     </div>
   )
 }

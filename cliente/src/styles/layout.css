@@ -1,0 +1,121 @@
+.app {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* ---------- Cabecera / chrome ----------
+   Único lugar donde vive el navy oscuro de la marca a pleno: una franja
+   fija de alto contraste, tipo "marcador", mientras el área de lectura
+   (input + grilla) se mantiene clara para el sol. */
+
+.chrome {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--chrome-bg);
+  box-shadow: var(--shadow-chrome);
+  padding: var(--space-4) var(--space-5);
+  overflow: hidden;
+}
+
+.chrome-inner {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.chrome-heading {
+  min-width: 0;
+}
+
+.chrome-eyebrow {
+  margin: 0 0 2px;
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-on-chrome-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.chrome-title {
+  font-size: 1.15rem;
+  color: var(--text-on-chrome);
+}
+
+.chrome-stat {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.chrome-stat-value {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--accent-success-strong);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.chrome-stat-label {
+  margin: 2px 0 0;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-on-chrome-muted);
+}
+
+/* ---------- Contenido ---------- */
+
+.app-main {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: var(--space-5) var(--space-4) var(--space-10);
+}
+
+.input-section {
+  margin-bottom: var(--space-4);
+}
+
+.input-section input {
+  width: 100%;
+  padding: var(--space-4) var(--space-4);
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--text);
+  background: var(--surface);
+  border: 1.5px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  transition: border-color 0.15s var(--ease);
+}
+
+.input-section input::placeholder {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.input-section input:focus-visible {
+  border-color: var(--accent-primary);
+}
+
+.input-section input:disabled {
+  opacity: 0.6;
+}
+
+.input-hint {
+  margin: var(--space-2) 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}

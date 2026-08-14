@@ -1,0 +1,136 @@
+/* ---------- Aviso de error/estado ---------- */
+
+.message {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: var(--space-4);
+  border: 1.5px solid;
+  border-radius: var(--radius-md);
+  font-size: 0.92rem;
+  line-height: 1.4;
+}
+
+.message-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.message.validation,
+.message.server {
+  border-color: var(--accent-error);
+  background: var(--accent-error-bg);
+  color: var(--accent-error);
+}
+
+.message.connection {
+  border-color: var(--accent-warning);
+  background: var(--accent-warning-bg);
+  color: var(--accent-warning);
+}
+
+/* ---------- Grilla de corredores ---------- */
+
+.runner-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: var(--space-3);
+}
+
+.empty-message {
+  color: var(--text-muted);
+  text-align: center;
+  padding: var(--space-8) 0;
+}
+
+.runner-card {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: var(--space-4) var(--space-3) var(--space-3) calc(var(--space-3) + 4px);
+  text-align: center;
+  overflow: hidden;
+}
+
+/* Barra de acento izquierda — codifica el estado sin agregar marcado. */
+.runner-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--accent-neutral);
+}
+
+.runner-card.registered::before {
+  background: linear-gradient(var(--accent-success-strong), var(--accent-secondary));
+}
+
+.runner-card .status-dot {
+  display: inline-block;
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 50%;
+  margin-bottom: var(--space-2);
+  background-color: var(--accent-neutral);
+}
+
+.runner-card.registered .status-dot {
+  background-color: var(--accent-success-strong);
+  box-shadow: 0 0 0 3px rgba(91, 227, 165, 0.25);
+}
+
+.runner-card .runner-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text);
+  overflow-wrap: anywhere;
+}
+
+.runner-card .runner-id {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-top: var(--space-1);
+  font-variant-numeric: tabular-nums;
+}
+
+.runner-card .runner-time {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--accent-secondary);
+  margin-top: var(--space-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.runner-card .runner-time.unregistered {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+.runner-card .runner-pending {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--accent-primary);
+  margin-top: var(--space-2);
+}
+
+.runner-card .runner-pending-icon {
+  animation: spin 1.1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

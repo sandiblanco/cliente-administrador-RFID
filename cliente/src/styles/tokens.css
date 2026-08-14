@@ -1,0 +1,98 @@
+/* ============================================================
+   Cliente · Registro de llegadas
+   Identidad visual: Carrera del Informático — tecnología + deporte.
+
+   Tema "día": fondo claro (legibilidad al sol, uso en cancha vía
+   teléfono), con la identidad navy concentrada en la cabecera y los
+   acentos azul/cian/turquesa/menta reservados a estados, acciones y
+   datos en vivo. Ver docs/superpowers/specs/2026-08-14-cliente-visual-redesign-design.md
+   ============================================================ */
+
+@font-face {
+  font-family: 'Chakra Petch';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('../assets/fonts/ChakraPetch-SemiBold.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+20AC, U+2122;
+}
+
+@font-face {
+  font-family: 'Chakra Petch';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('../assets/fonts/ChakraPetch-Bold.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+2000-206F, U+20AC, U+2122;
+}
+
+:root {
+  color-scheme: light;
+
+  /* -- Marca: paleta base de Carrera del Informático -- */
+  --navy-deep: #061a33;
+  --blue-dark: #0a2547;
+  --blue-electric: #008ff5;
+  --cyan-tech: #00c9d8;
+  --turquoise-neon: #00e6c3;
+  --mint: #5be3a5;
+  --white-cold: #f4f7fa;
+  --gray-blue: #9cb1c7;
+
+  /* -- Roles: tema día -- */
+  --bg: var(--white-cold);
+  --surface: #ffffff;
+  --surface-sunken: #eaf0f6;
+  /* rgba (not color-mix) on purpose: this app runs live, on whatever phone
+     a staff member has on hand, so we favor universally-supported CSS over
+     newer functions. */
+  --border: rgba(156, 177, 199, 0.55);
+  --border-strong: rgba(156, 177, 199, 0.85);
+
+  --text: var(--blue-dark);
+  --text-muted: #4b6580;
+  --text-on-chrome: var(--white-cold);
+  --text-on-chrome-muted: #c7d3e0;
+
+  --chrome-bg: var(--navy-deep);
+  --chrome-bg-raised: #0d2440;
+
+  --accent-primary: var(--blue-electric);
+  --accent-secondary: var(--cyan-tech);
+  --accent-success: var(--turquoise-neon);
+  --accent-success-strong: var(--mint);
+  --accent-neutral: var(--gray-blue);
+
+  /* Semántico — únicamente para alertas, nunca decorativo. */
+  --accent-error: #b3261e;
+  --accent-error-bg: #fbebe9;
+  --accent-warning: #8a5300;
+  --accent-warning-bg: #fbf1e0;
+
+  --focus-ring: var(--blue-electric);
+
+  /* -- Tipografía -- */
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  --font-display: 'Chakra Petch', var(--font-body);
+
+  /* -- Espaciado (escala 4px) -- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+
+  --shadow-card: 0 1px 2px rgba(10, 37, 71, 0.06), 0 1px 1px rgba(10, 37, 71, 0.04);
+  --shadow-chrome: 0 2px 12px rgba(6, 26, 51, 0.18);
+
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+}

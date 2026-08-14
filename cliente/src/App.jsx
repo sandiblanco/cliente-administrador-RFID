@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import RunnerInput from './components/RunnerInput.jsx'
 import RunnerGrid from './components/RunnerGrid.jsx'
+import { AlertIcon } from './components/icons.jsx'
 import { getRunners, sendEvent, ApiConnectionError } from './services/api.js'
 import {
   connectSocket,
@@ -170,24 +171,35 @@ export default function App() {
 
   return (
     <main className="app">
-      <header>
-        <h1>Registro de llegadas</h1>
-        <p className="runner-count">
-          {registeredCount} de {runners.length} corredores registrados
-        </p>
+      <header className="chrome">
+        <div className="chrome-inner">
+          <div className="chrome-heading">
+            <p className="chrome-eyebrow">Carrera del Informático</p>
+            <h1 className="chrome-title">Registro de llegadas</h1>
+          </div>
+          <div className="chrome-stat">
+            <p className="chrome-stat-value">
+              {registeredCount}/{runners.length}
+            </p>
+            <p className="chrome-stat-label">Registrados</p>
+          </div>
+        </div>
       </header>
 
-      <section className="input-section">
-        <RunnerInput onSubmit={handleSubmit} disabled={pendingIds.length > 0} />
-      </section>
+      <div className="app-main">
+        <section className="input-section">
+          <RunnerInput onSubmit={handleSubmit} disabled={pendingIds.length > 0} />
+        </section>
 
-      {error && (
-        <p className={`message ${error.type}`} role="alert">
-          {error.message}
-        </p>
-      )}
+        {error && (
+          <p className={`message ${error.type}`} role="alert">
+            <AlertIcon className="message-icon" />
+            <span>{error.message}</span>
+          </p>
+        )}
 
-      <RunnerGrid runners={runners} pendingIds={pendingIds} />
+        <RunnerGrid runners={runners} pendingIds={pendingIds} />
+      </div>
     </main>
   )
 }
