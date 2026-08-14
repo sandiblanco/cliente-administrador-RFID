@@ -6,6 +6,7 @@ export default function EditTimeModal({ runner, onSave, onClose }) {
   const [value, setValue] = useState(toDatetimeLocalValue(runner.timestamp))
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
+  const isNew = !runner.timestamp
 
   const handleSubmit = async (event) => {
     event.preventDefault()
@@ -33,10 +34,10 @@ export default function EditTimeModal({ runner, onSave, onClose }) {
         className="modal"
         role="dialog"
         aria-modal="true"
-        aria-label={`Editar tiempo de ${runner.name}`}
+        aria-label={`${isNew ? 'Agregar' : 'Editar'} tiempo de ${runner.name}`}
         onClick={(event) => event.stopPropagation()}
       >
-        <h2>Editar tiempo</h2>
+        <h2>{isNew ? 'Agregar tiempo' : 'Editar tiempo'}</h2>
         <p className="modal-subtitle">
           {runner.name} · ID {runner.id}
         </p>

@@ -3,15 +3,18 @@ import { formatTime } from '../utils/formatTime'
 import { STATUS, getStatus } from '../utils/status'
 import { formatCategoryLabel } from '../utils/category'
 import EditTimeModal from './EditTimeModal'
+import DeleteTimeConfirm from './DeleteTimeConfirm'
 
 export default function RunnerTable({
   runners,
   emptyMessage = 'Sin corredores',
   onEditTime,
+  onDeleteTime,
   showCategory = false,
   showRank = false,
 }) {
   const [editingRunner, setEditingRunner] = useState(null)
+  const [deletingRunner, setDeletingRunner] = useState(null)
 
   if (runners.length === 0) {
     return <p className="empty">{emptyMessage}</p>
@@ -21,6 +24,7 @@ export default function RunnerTable({
     getStatus(runner) === STATUS.FINISHED ? 'badge-done' : 'badge-pending'
 
   const handleSave = (timestamp) => onEditTime(editingRunner.id, timestamp)
+  const handleDelete = () => onDeleteTime(deletingRunner.id)
 
   return (
     <div className="table-wrapper">
@@ -59,17 +63,24 @@ export default function RunnerTable({
               </td>
               {onEditTime && (
                 <td>
-                  {runner.timestamp ? (
+                  <div className="row-actions">
                     <button
                       type="button"
                       className="link-action"
                       onClick={() => setEditingRunner(runner)}
                     >
-                      Editar tiempo
+                      {runner.timestamp ? 'Editar tiempo' : 'Agregar tiempo'}
                     </button>
-                  ) : (
-                    <span className="muted">—</span>
-                  )}
+                    {runner.timestamp && onDeleteTime && (
+                      <button
+                        type="button"
+                        className="link-action link-danger"
+                        onClick={() => setDeletingRunner(runner)}
+                      >
+                        Eliminar
+                      </button>
+                    )}
+                  </div>
                 </td>
               )}
             </tr>
@@ -82,6 +93,14 @@ export default function RunnerTable({
           runner={editingRunner}
           onSave={handleSave}
           onClose={() => setEditingRunner(null)}
+        />
+      )}
+
+      {deletingRunner && (
+        <DeleteTimeConfirm
+          runner={deletingRunner}
+          onConfirm={handleDelete}
+          onClose={() => setDeletingRunner(null)}
         />
       )}
     </div>

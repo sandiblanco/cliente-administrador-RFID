@@ -89,3 +89,9 @@ export async function updateResultTime(id, timestamp) {
     body: JSON.stringify({ timestamp }),
   })
 }
+
+export async function deleteResultTime(id) {
+  return request(`${CONFIG.http.results}/${id}/time`, {
+    method: 'DELETE',
+  })
+}

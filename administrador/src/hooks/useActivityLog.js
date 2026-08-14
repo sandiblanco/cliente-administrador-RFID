@@ -20,6 +20,16 @@ function buildEntry(raw) {
     }
   }
 
+  if (raw.deleted) {
+    return {
+      id: nextId++,
+      at: new Date(),
+      kind: 'deleted',
+      tag: 'Tiempo eliminado',
+      text: `${name} (#${raw.runner_id}) — tiempo eliminado, vuelve a quedar pendiente`,
+    }
+  }
+
   if (raw.corrected) {
     return {
       id: nextId++,
@@ -30,13 +40,14 @@ function buildEntry(raw) {
     }
   }
 
-  const source = raw.source === 'manual' ? 'manual' : 'RFID'
+  const sourceLabel =
+    raw.source === 'manual' ? 'manual' : raw.source === 'admin' ? 'panel admin' : 'RFID'
   return {
     id: nextId++,
     at: new Date(),
     kind: 'finish',
     tag: 'Llegada',
-    text: `${name} (#${raw.runner_id}) — llegada registrada (${raw.elapsed_display ?? '—'}, ${source})`,
+    text: `${name} (#${raw.runner_id}) — llegada registrada (${raw.elapsed_display ?? '—'}, ${sourceLabel})`,
   }
 }
 

@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import RunnerTable from './RunnerTable'
 import { RESULT_FILTERS } from '../utils/category'
 
-export default function ResultsPanel({ runners, onEditTime }) {
+export default function ResultsPanel({ runners, onEditTime, onDeleteTime }) {
   const [activeFilterId, setActiveFilterId] = useState(RESULT_FILTERS[0].id)
 
   const activeFilter =
@@ -40,6 +40,7 @@ export default function ResultsPanel({ runners, onEditTime }) {
         runners={filteredResults}
         emptyMessage="Aún no hay corredores finalizados en esta modalidad"
         onEditTime={onEditTime}
+        onDeleteTime={onDeleteTime}
         showRank
       />
     </div>

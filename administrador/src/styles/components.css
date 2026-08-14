@@ -66,6 +66,16 @@
   text-decoration: underline;
 }
 
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.link-danger {
+  color: var(--accent-error);
+}
+
 /* ---------- Badges de marca (demo) ---------- */
 
 .badge {
@@ -351,6 +361,16 @@
   border-left: 3px solid var(--border-strong);
 }
 
+/* Eliminar un tiempo revierte al corredor a "pendiente" — mismo
+   tratamiento neutro que ese estado, no el rojo de error. */
+.activity-deleted {
+  border-left: 3px solid var(--accent-neutral);
+}
+
+.activity-deleted .activity-tag {
+  color: var(--text-muted);
+}
+
 /* ---------- Búsqueda ---------- */
 
 .search-bar {
@@ -587,6 +607,12 @@ tbody tr:has(.badge-pending) td:first-child {
   font-size: 0.85rem;
 }
 
+.modal-warning {
+  color: var(--accent-error);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
 .modal-field {
   display: flex;
   flex-direction: column;
@@ -660,8 +686,19 @@ tbody tr:has(.badge-pending) td:first-child {
   color: var(--text);
 }
 
+.btn-danger {
+  background: var(--accent-error);
+  color: #fff;
+  border: 1.5px solid var(--accent-error);
+}
+
+.btn-danger:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
 .btn-primary:disabled,
-.btn-secondary:disabled {
+.btn-secondary:disabled,
+.btn-danger:disabled {
   opacity: 0.45;
   cursor: default;
 }

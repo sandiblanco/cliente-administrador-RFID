@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useRunners } from './hooks/useRunners'
 import { useTheme } from './hooks/useTheme'
 import { useActivityLog } from './hooks/useActivityLog'
-import { updateResultTime } from './api/client'
+import { deleteResultTime, updateResultTime } from './api/client'
 import CONFIG from './config'
 import Dashboard from './components/Dashboard'
 import RunnerTable from './components/RunnerTable'
@@ -37,6 +37,14 @@ export default function App() {
       subcategory: res.result.subcategory,
       gender: res.result.gender,
     })
+  }
+
+  const handleDeleteTime = async (runnerId) => {
+    const res = await deleteResultTime(runnerId)
+    if (res.status !== 'ok') {
+      throw new Error(res.message || 'No se pudo eliminar el tiempo')
+    }
+    applyUpdate({ id: runnerId, timestamp: null })
   }
 
   const filteredRunners = useMemo(
@@ -102,6 +110,7 @@ export default function App() {
               query.trim() ? 'Sin resultados para la búsqueda' : 'Sin corredores'
             }
             onEditTime={handleEditTime}
+            onDeleteTime={handleDeleteTime}
             showCategory
           />
         </section>
@@ -109,7 +118,11 @@ export default function App() {
 
       {!loading && activeTab === 'results' && (
         <section>
-          <ResultsPanel runners={runners} onEditTime={handleEditTime} />
+          <ResultsPanel
+            runners={runners}
+            onEditTime={handleEditTime}
+            onDeleteTime={handleDeleteTime}
+          />
         </section>
       )}
     </div>
