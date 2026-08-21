@@ -1,13 +1,31 @@
 import { mockRunners } from '../data/mockRunners.js'
 
+const MOCK_RESULTS_KEY = 'carrera_mock_results'
+
+function loadMockResults() {
+  try {
+    return JSON.parse(localStorage.getItem(MOCK_RESULTS_KEY)) || {}
+  } catch {
+    return {}
+  }
+}
+
+function saveMockResult(runnerId, timestamp, elapsedSeconds) {
+  const results = loadMockResults()
+  results[runnerId] = { timestamp, elapsedSeconds }
+  localStorage.setItem(MOCK_RESULTS_KEY, JSON.stringify(results))
+}
+
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
+// TODO: revertir a false antes de produccion
 export const USE_MOCK_DATA = false
 
 export const ENDPOINTS = {
   runners: '/runners',
   results: '/results',
   events: '/events',
+  sync: '/events/sync',
 }
 
 function mapRunner(runner, timestamp, elapsedSeconds) {
@@ -35,7 +53,14 @@ export class ApiError extends Error {
 
 export async function getRunners() {
   if (USE_MOCK_DATA) {
-    return structuredClone(mockRunners)
+    const cached = loadMockResults()
+    return mockRunners.map((runner) => {
+      const result = cached[runner.id]
+      if (result) {
+        return { ...runner, timestamp: result.timestamp, elapsedSeconds: result.elapsedSeconds }
+      }
+      return { ...runner }
+    })
   }
 
   try {
@@ -83,9 +108,19 @@ export async function getRunners() {
   }
 }
 
-export async function sendEvent({ runner_id, timestamp }) {
+export async function sendEvent({ runner_id, timestamp, event_id }) {
   if (USE_MOCK_DATA) {
-    return { status: 'queued' }
+    if (!navigator.onLine) {
+      throw new ApiConnectionError()
+    }
+    const elapsed = Math.floor(Math.random() * 7200) + 1800
+    saveMockResult(runner_id, timestamp, elapsed)
+    return {
+      status: 'confirmed',
+      runner_id,
+      timestamp,
+      elapsed_seconds: elapsed,
+    }
   }
 
   try {
@@ -94,11 +129,46 @@ export async function sendEvent({ runner_id, timestamp }) {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ source: 'manual', runner_id, timestamp }),
+      body: JSON.stringify({ source: 'manual', runner_id, timestamp, event_id }),
     })
 
     if (!response.ok) {
       let message = 'No se pudo registrar el tiempo.'
+      const body = await response.json().catch(() => null)
+      if (body && body.message) {
+        message = body.message
+      }
+      throw new ApiError(message)
+    }
+
+    return await response.json()
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error
+    }
+    throw new ApiConnectionError()
+  }
+}
+
+export async function sendEventsSync(events) {
+  if (USE_MOCK_DATA) {
+    const results = events.map((e) => {
+      const elapsed = Math.floor(Math.random() * 7200) + 1800
+      saveMockResult(e.runner_id, e.timestamp, elapsed)
+      return { event_id: e.event_id, status: 'accepted' }
+    })
+    return { status: 'ok', results }
+  }
+
+  try {
+    const response = await fetch(`${API_URL}${ENDPOINTS.sync}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ events }),
+    })
+
+    if (!response.ok) {
+      let message = 'Error al sincronizar eventos offline.'
       const body = await response.json().catch(() => null)
       if (body && body.message) {
         message = body.message

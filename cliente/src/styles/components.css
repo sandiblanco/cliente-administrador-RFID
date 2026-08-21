@@ -134,3 +134,52 @@
     transform: rotate(360deg);
   }
 }
+
+/* ---------- Indicador de conexión ---------- */
+
+.connection-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.connection-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.connection-dot.online {
+  background-color: var(--accent-success-strong);
+  box-shadow: 0 0 0 3px rgba(91, 227, 165, 0.25);
+}
+
+.connection-dot.offline {
+  background-color: var(--accent-error);
+  box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.25);
+}
+
+.connection-dot.syncing {
+  background-color: var(--accent-warning);
+  animation: pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+}
+
+.connection-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--text-on-chrome-muted);
+  white-space: nowrap;
+}

@@ -5,11 +5,30 @@
 # Requires: sshpass (brew install hudochenkov/sshpass/sshpass | apt/dnf install sshpass)
 set -euo pipefail
 
-SSH_HOST=172.24.160.6
+SSH_HOST_LAN=172.24.160.6
+SSH_HOST_TAILSCALE=100.120.91.17
 SSH_PORT=1022
 SSH_USER=marcos
 REMOTE_DIR=/volume1/docker/cliente_administrador_rfid
 BRANCH=dev
+
+# Comprueba si un host:puerto acepta conexiones TCP en un plazo corto.
+host_reachable() {
+  local host="$1"
+  timeout 3 bash -c "cat < /dev/null > /dev/tcp/${host}/${SSH_PORT}" 2>/dev/null
+}
+
+echo "==> Detectando ruta de acceso al NAS"
+if host_reachable "$SSH_HOST_LAN"; then
+  SSH_HOST="$SSH_HOST_LAN"
+  echo "Usando red local (${SSH_HOST})"
+elif host_reachable "$SSH_HOST_TAILSCALE"; then
+  SSH_HOST="$SSH_HOST_TAILSCALE"
+  echo "Red local no disponible; usando Tailscale (${SSH_HOST})"
+else
+  echo "No se pudo contactar al NAS ni por red local (${SSH_HOST_LAN}) ni por Tailscale (${SSH_HOST_TAILSCALE})" >&2
+  exit 1
+fi
 
 read -rsp "Contraseña SSH de ${SSH_USER}@${SSH_HOST}: " SSH_PASS
 echo
