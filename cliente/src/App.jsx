@@ -19,6 +19,7 @@ import {
 
 const CONFIRM_TIMEOUT_MS = 10000
 const POLL_INTERVAL_MS = 10000
+const SYNC_RETRY_INTERVAL_MS = 20000
 const RUNNERS_CACHE_KEY = 'carrera_runners_cache'
 
 export default function App() {
@@ -146,16 +147,35 @@ export default function App() {
 
   // Network status listener + auto-sync on reconnect
   useEffect(() => {
-    const unsubStatus = network.onStatusChange(async (online) => {
+    // Arranca la revalidación periódica real (fetch a /health, no solo
+    // navigator.onLine) — sin esto, isOnline nunca se corrige solo si la
+    // conexión vuelve sin pasar por un evento 'online' del navegador.
+    network.start()
+
+    const unsubStatus = network.onStatusChange((online) => {
       setIsOnline(online)
       if (online) {
-        const reachable = await network.isServerReachable()
-        if (reachable) {
-          triggerSync()
-          pollRunners()
-        }
+        triggerSync()
+        pollRunners()
       }
     })
+
+    // Por si ya había una cola pendiente de una sesión anterior y la
+    // página se abrió/recargó estando online: sin este intento al
+    // montar, esos registros solo se reenvían si ocurre una transición
+    // offline→online real, que puede no volver a pasar en esta sesión.
+    triggerSync()
+
+    // Red de seguridad: reintenta la cola periódicamente en vez de
+    // depender únicamente de las notificaciones de cambio de estado.
+    // sync() ya verifica alcanzabilidad real antes de enviar nada, así
+    // que este tick es barato cuando no hay nada pendiente o no hay
+    // conexión.
+    const syncRetryTimer = setInterval(() => {
+      if (offlineQueue.getCount() > 0) {
+        triggerSync()
+      }
+    }, SYNC_RETRY_INTERVAL_MS)
 
     const unsubProgress = syncService.onSyncProgress(({ processed, total }) => {
       setSyncProgress({ processed, total })
@@ -177,6 +197,8 @@ export default function App() {
     })
 
     return () => {
+      network.stop()
+      clearInterval(syncRetryTimer)
       unsubStatus()
       unsubProgress()
       unsubComplete()

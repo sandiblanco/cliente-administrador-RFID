@@ -26,6 +26,30 @@ function save(queue) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(queue))
 }
 
+// Un ítem queda marcado 'syncing' justo antes de intentarse enviar (ver
+// sync.js). El flag _syncing de sync.js vive solo en memoria, así que
+// siempre arranca en false al cargar la página — cualquier ítem que
+// aparezca en 'syncing' en este momento es necesariamente de una sesión
+// anterior interrumpida a mitad de un envío (pestaña cerrada, recargada,
+// o un fetch que quedó colgado). getPending()/getCount() solo miran
+// 'pending', así que sin esto esos ítems quedan huérfanos para siempre:
+// invisibles tanto para el contador como para cualquier sync futuro.
+function reclaimOrphaned() {
+  const queue = load()
+  let changed = false
+  for (const item of queue) {
+    if (item.status === 'syncing') {
+      item.status = 'pending'
+      changed = true
+    }
+  }
+  if (changed) {
+    save(queue)
+  }
+}
+
+reclaimOrphaned()
+
 export const offlineQueue = {
   add(runnerId, timestamp) {
     const queue = load()

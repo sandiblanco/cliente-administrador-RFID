@@ -41,8 +41,11 @@ export const syncService = {
 
   async sync() {
     if (_syncing) return
-    if (!network.isOnline()) return
 
+    // Chequeo real contra el servidor, no el flag cacheado de
+    // network.isOnline(): ese flag puede quedar atascado en `false` (p.
+    // ej. el evento 'offline' del navegador se disparó pero la conexión
+    // ya volvió) y con eso ni siquiera un sync manual lo destrababa.
     const reachable = await network.isServerReachable()
     if (!reachable) return
 

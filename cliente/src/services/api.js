@@ -18,6 +18,22 @@ function saveMockResult(runnerId, timestamp, elapsedSeconds) {
 
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
+// Sin timeout, un fetch en una conexión que no falla limpio (paquetes
+// perdidos en vez de conexión rechazada) puede quedar colgado decenas de
+// segundos o más, sin que nada se detecte como "sin conexión" mientras
+// tanto. isServerReachable() ya usa este mismo patrón con AbortController;
+// acá se aplica también a los envíos reales para que fallen rápido y
+// caigan en el flujo de cola offline en vez de quedar en el limbo.
+const FETCH_TIMEOUT_MS = 10000
+
+function fetchWithTimeout(url, options = {}) {
+  const controller = new AbortController()
+  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS)
+  return fetch(url, { ...options, signal: controller.signal }).finally(() =>
+    clearTimeout(timeout),
+  )
+}
+
 // TODO: revertir a false antes de produccion
 export const USE_MOCK_DATA = false
 
@@ -124,7 +140,7 @@ export async function sendEvent({ runner_id, timestamp, event_id }) {
   }
 
   try {
-    const response = await fetch(`${API_URL}${ENDPOINTS.events}`, {
+    const response = await fetchWithTimeout(`${API_URL}${ENDPOINTS.events}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -161,7 +177,7 @@ export async function sendEventsSync(events) {
   }
 
   try {
-    const response = await fetch(`${API_URL}${ENDPOINTS.sync}`, {
+    const response = await fetchWithTimeout(`${API_URL}${ENDPOINTS.sync}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ events }),
