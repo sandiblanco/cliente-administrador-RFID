@@ -1,0 +1,4 @@
+# Override local de docker-compose para pruebas (ej. apuntar el build del
+# frontend a un backend local/Tailscale en vez del servidor de producción).
+# No debe compartirse: cada quien apunta sus propias pruebas a su propia IP.
+docker-compose.override.yml
