@@ -449,6 +449,21 @@
   box-shadow: var(--shadow-card);
 }
 
+.table-count {
+  margin: 0;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* Caso "sin resultados": no hay tabla debajo que separar con el borde. */
+.table-count-standalone {
+  border-bottom: none;
+  padding: 0 0 10px;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
@@ -820,4 +835,159 @@ tbody tr:has(.badge-pending) td:first-child {
   font-family: var(--font-display);
   font-size: 1rem;
   color: var(--text);
+}
+
+/* ---------- Subir archivo de corredores ---------- */
+
+.upload-runners-panel {
+  max-width: 560px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 22px;
+}
+
+.upload-runners-panel h2 {
+  margin: 0 0 8px;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--text);
+}
+
+.upload-runners-hint {
+  margin: 0 0 18px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.upload-runners-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+}
+
+.upload-runners-dropzone {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1.5px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 18px;
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.upload-runners-dropzone:hover {
+  border-color: var(--accent-primary);
+  color: var(--text);
+}
+
+.upload-runners-actions {
+  margin-top: 18px;
+}
+
+.upload-runners-result {
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.upload-runners-result p {
+  margin: 0 0 10px;
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.upload-runners-skipped {
+  margin: 0 0 16px;
+  padding: 12px 14px;
+  background: var(--surface-sunken);
+  border-radius: var(--radius-sm);
+  max-height: 220px;
+  overflow-y: auto;
+  color: var(--text-faint);
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+/* ---------- Tag RFID por corredor (icono + desplegable) ---------- */
+
+.id-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tag-edit-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-faint);
+  cursor: pointer;
+}
+
+.tag-edit-trigger:hover {
+  background: var(--surface-sunken);
+  color: var(--accent-primary);
+}
+
+/* Ya tiene un tag asignado: se distingue de "sin asignar" a simple vista. */
+.tag-edit-trigger-set {
+  color: var(--accent-primary);
+}
+
+.tag-edit-popover {
+  position: fixed;
+  z-index: 1000;
+  width: 220px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-chrome);
+  padding: 14px;
+}
+
+.tag-edit-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.tag-edit-field input {
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border-strong);
+  background: var(--surface-sunken);
+  color: var(--text);
+  font-size: 0.9rem;
+  font-weight: 400;
+}
+
+.tag-edit-field input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: var(--glow-primary);
+}
+
+.tag-edit-error {
+  padding: 8px 10px;
+  margin: 10px 0 0;
+  font-size: 0.76rem;
+}
+
+.tag-edit-save {
+  width: 100%;
+  margin-top: 12px;
 }

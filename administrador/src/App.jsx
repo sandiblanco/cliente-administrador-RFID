@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useRunners } from './hooks/useRunners'
 import { useTheme } from './hooks/useTheme'
 import { useActivityLog } from './hooks/useActivityLog'
-import { deleteResultTime, updateResultTime } from './api/client'
+import { deleteResultTime, updateResultTime, updateRunner } from './api/client'
 import CONFIG from './config'
 import Dashboard from './components/Dashboard'
 import RunnerTable from './components/RunnerTable'
@@ -10,6 +10,8 @@ import ResultsPanel from './components/ResultsPanel'
 import SearchBar from './components/SearchBar'
 import ClearTimesButton from './components/ClearTimesButton'
 import TimeConfigPanel from './components/TimeConfigPanel'
+import HeaderMenu from './components/HeaderMenu'
+import UploadRunnersPage from './components/UploadRunnersPage'
 import { AlertIcon, MoonIcon, ReloadIcon, SunIcon } from './components/icons'
 import { filterRunners } from './utils/search'
 import { RUNNER_CATEGORY_FILTERS } from './utils/category'
@@ -54,6 +56,24 @@ export default function App() {
     applyUpdate({ id: runnerId, timestamp: null })
   }
 
+  // PUT /runners/{id} espera el Runner completo, no un parche — se
+  // reconstruye a partir de lo que ya tenemos en memoria para esa fila
+  // en vez de pedirlo de nuevo al servidor.
+  const handleUpdateTag = async (runner, tagId) => {
+    const res = await updateRunner(runner.id, {
+      runner_id: runner.id,
+      tag_id: tagId,
+      name: runner.name,
+      gender: runner.gender,
+      category: runner.category,
+      subcategory: runner.subcategory,
+    })
+    if (res.status !== 'ok') {
+      throw new Error(res.message || 'No se pudo actualizar el tag')
+    }
+    applyUpdate({ id: runner.id, tagId })
+  }
+
   const runnerCategoryFilter =
     RUNNER_CATEGORY_FILTERS.find((f) => f.id === runnerCategoryFilterId) ??
     RUNNER_CATEGORY_FILTERS[0]
@@ -84,6 +104,7 @@ export default function App() {
             <ReloadIcon />
             Recargar
           </button>
+          <HeaderMenu onUploadRunners={() => setActiveTab('upload-runners')} />
         </div>
       </header>
 
@@ -141,6 +162,7 @@ export default function App() {
             }
             onEditTime={handleEditTime}
             onDeleteTime={handleDeleteTime}
+            onUpdateTag={handleUpdateTag}
             showCategory
           />
         </section>
@@ -160,6 +182,15 @@ export default function App() {
         <section>
           <TimeConfigPanel onTimesCleared={reload} />
         </section>
+      )}
+
+      {activeTab === 'upload-runners' && (
+        <UploadRunnersPage
+          onDone={() => {
+            setActiveTab('runners')
+            reload()
+          }}
+        />
       )}
     </div>
   )
