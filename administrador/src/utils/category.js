@@ -18,7 +18,7 @@ const SUBCATEGORIES = [
   { value: 'informatico', label: 'Informático' },
 ]
 
-const normalize = (value) => (value ?? '').toString().trim().toLowerCase()
+export const normalize = (value) => (value ?? '').toString().trim().toLowerCase()
 
 export function formatCategoryLabel(runner) {
   if (!runner.category) {
@@ -52,6 +52,15 @@ export const PODIUM_GROUPS = SUBCATEGORIES.flatMap((subcategory) =>
       (runner.gender ?? '').toUpperCase() === gender.value,
   }))
 )
+
+// Alterna la vista de la sección Corredores entre las dos modalidades —
+// no premia nada, a diferencia de PODIUM_GROUPS, así que no reutiliza esa
+// lista aunque comparta la idea de "match" por categoría.
+export const RUNNER_CATEGORY_FILTERS = [
+  { id: 'todos', label: 'Todos', match: () => true },
+  { id: '5k', label: '5K', match: (runner) => normalize(runner.category) === '5k' },
+  { id: '10k', label: '10K', match: (runner) => normalize(runner.category) === '10k' },
+]
 
 export const RESULT_FILTERS = [
   { id: 'todos', label: 'Todos', match: () => true },

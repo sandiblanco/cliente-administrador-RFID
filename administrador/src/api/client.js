@@ -108,3 +108,26 @@ export async function deleteResultTime(id) {
     method: 'DELETE',
   })
 }
+
+// Borra el tiempo final de TODOS los corredores de un saque — usada por
+// "Limpiar tiempos" tanto en Corredores como en Configuración de tiempos.
+export async function clearAllResultTimes() {
+  return request(CONFIG.http.results, {
+    method: 'DELETE',
+  })
+}
+
+// Fija la hora de inicio de una categoría ("5K" o "10K"). El servidor la
+// usa para calcular el tiempo transcurrido de cada corredor de esa
+// categoría — no toca los tiempos finales ya registrados.
+export async function setRaceStartTime(category, startTime) {
+  return request(CONFIG.http.raceConfig, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ category, start_time: startTime }),
+  })
+}
+
+export async function getRaceConfig() {
+  return request(CONFIG.http.raceConfig)
+}

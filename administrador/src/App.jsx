@@ -8,13 +8,17 @@ import Dashboard from './components/Dashboard'
 import RunnerTable from './components/RunnerTable'
 import ResultsPanel from './components/ResultsPanel'
 import SearchBar from './components/SearchBar'
+import ClearTimesButton from './components/ClearTimesButton'
+import TimeConfigPanel from './components/TimeConfigPanel'
 import { AlertIcon, MoonIcon, ReloadIcon, SunIcon } from './components/icons'
 import { filterRunners } from './utils/search'
+import { RUNNER_CATEGORY_FILTERS } from './utils/category'
 
 const TABS = [
   { id: 'dashboard', label: 'Dashboard' },
   { id: 'runners', label: 'Corredores' },
   { id: 'results', label: 'Resultados' },
+  { id: 'time-config', label: 'Configuración de tiempos' },
 ]
 
 export default function App() {
@@ -23,6 +27,9 @@ export default function App() {
   const activityLog = useActivityLog()
   const [activeTab, setActiveTab] = useState('dashboard')
   const [query, setQuery] = useState('')
+  const [runnerCategoryFilterId, setRunnerCategoryFilterId] = useState(
+    RUNNER_CATEGORY_FILTERS[0].id
+  )
 
   const handleEditTime = async (runnerId, timestamp) => {
     const res = await updateResultTime(runnerId, timestamp)
@@ -47,9 +54,13 @@ export default function App() {
     applyUpdate({ id: runnerId, timestamp: null })
   }
 
+  const runnerCategoryFilter =
+    RUNNER_CATEGORY_FILTERS.find((f) => f.id === runnerCategoryFilterId) ??
+    RUNNER_CATEGORY_FILTERS[0]
+
   const filteredRunners = useMemo(
-    () => filterRunners(runners, query),
-    [runners, query]
+    () => filterRunners(runners, query).filter(runnerCategoryFilter.match),
+    [runners, query, runnerCategoryFilter]
   )
 
   return (
@@ -103,6 +114,25 @@ export default function App() {
 
       {!loading && activeTab === 'runners' && (
         <section>
+          <div className="runners-toolbar">
+            <div className="filter-buttons" role="tablist" aria-label="Modalidad">
+              {RUNNER_CATEGORY_FILTERS.map((filter) => (
+                <button
+                  key={filter.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={runnerCategoryFilterId === filter.id}
+                  className={`filter-btn ${
+                    runnerCategoryFilterId === filter.id ? 'filter-btn-active' : ''
+                  }`}
+                  onClick={() => setRunnerCategoryFilterId(filter.id)}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+            <ClearTimesButton onCleared={reload} />
+          </div>
           <SearchBar query={query} onChange={setQuery} />
           <RunnerTable
             runners={filteredRunners}
@@ -123,6 +153,12 @@ export default function App() {
             onEditTime={handleEditTime}
             onDeleteTime={handleDeleteTime}
           />
+        </section>
+      )}
+
+      {!loading && activeTab === 'time-config' && (
+        <section>
+          <TimeConfigPanel onTimesCleared={reload} />
         </section>
       )}
     </div>

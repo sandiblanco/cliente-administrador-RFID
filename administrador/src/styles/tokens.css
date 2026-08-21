@@ -67,6 +67,13 @@
   --accent-success-tint: rgba(91, 227, 165, 0.14);
   --accent-neutral: var(--gray-blue);
 
+  /* Iniciar tiempos 5K / 10K: dos acentos de marca claramente distintos
+     (azul vs. violeta) para que nunca se confunda un botón con el otro. */
+  --accent-5k: var(--blue-electric);
+  --accent-5k-tint: rgba(0, 143, 245, 0.12);
+  --accent-10k: #8a5cf6;
+  --accent-10k-tint: rgba(138, 92, 246, 0.14);
+
   /* Semántico — únicamente para errores reales de servidor/conexión. */
   --accent-error: #b3261e;
   --accent-error-bg: #fbebe9;

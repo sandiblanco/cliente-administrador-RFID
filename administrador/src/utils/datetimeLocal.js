@@ -21,3 +21,14 @@ export function fromDatetimeLocalValue(value) {
   // si el navegador los omite.
   return value.length === 16 ? `${value}:00` : value
 }
+
+// Hora actual del navegador como timestamp "naive", en el mismo formato
+// que usa el servidor (sin 'Z' ni offset) — la usan los botones "Iniciar
+// tiempos" para fijar el inicio de una categoría al momento del click.
+export function nowAsNaiveTimestamp() {
+  const d = new Date()
+  const pad = (n) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(
+    d.getHours()
+  )}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`
+}
