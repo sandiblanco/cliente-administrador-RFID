@@ -10,6 +10,8 @@ import ResultsPanel from './components/ResultsPanel'
 import SearchBar from './components/SearchBar'
 import ClearTimesButton from './components/ClearTimesButton'
 import TimeConfigPanel from './components/TimeConfigPanel'
+import HeaderMenu from './components/HeaderMenu'
+import UploadRunnersPage from './components/UploadRunnersPage'
 import { AlertIcon, MoonIcon, ReloadIcon, SunIcon } from './components/icons'
 import { filterRunners } from './utils/search'
 import { RUNNER_CATEGORY_FILTERS } from './utils/category'
@@ -84,6 +86,7 @@ export default function App() {
             <ReloadIcon />
             Recargar
           </button>
+          <HeaderMenu onUploadRunners={() => setActiveTab('upload-runners')} />
         </div>
       </header>
 
@@ -160,6 +163,15 @@ export default function App() {
         <section>
           <TimeConfigPanel onTimesCleared={reload} />
         </section>
+      )}
+
+      {activeTab === 'upload-runners' && (
+        <UploadRunnersPage
+          onDone={() => {
+            setActiveTab('runners')
+            reload()
+          }}
+        />
       )}
     </div>
   )

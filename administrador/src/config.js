@@ -12,6 +12,7 @@ const CONFIG = {
   },
   http: {
     runners: `${SERVER_URL}/runners`,
+    runnersReplaceFromFile: `${SERVER_URL}/runners/bulk/replace-from-file`,
     results: `${SERVER_URL}/results`,
     raceConfig: `${SERVER_URL}/race-config`,
   },

@@ -1,0 +1,12 @@
+services:
+  cliente:
+    build:
+      args:
+        VITE_API_URL: http://localhost:8000
+        VITE_SOCKET_URL: ws://localhost:8000/ws/live
+
+  administrador:
+    build:
+      args:
+        VITE_SERVER_URL: http://localhost:8000
+        VITE_SOCKET_URL: ws://localhost:8000/ws/live

@@ -131,3 +131,21 @@ export async function setRaceStartTime(category, startTime) {
 export async function getRaceConfig() {
   return request(CONFIG.http.raceConfig)
 }
+
+// Reemplaza TODOS los corredores (y borra los tiempos ya registrados) a
+// partir de un .xlsx con el listado de inscritos. No pasa por request()
+// porque es multipart, no JSON: el navegador arma el Content-Type con el
+// boundary correcto al ver un FormData, así que no lo fijamos a mano.
+export async function replaceRunnersFromFile(file) {
+  const formData = new FormData()
+  formData.append('file', file)
+
+  const res = await fetch(CONFIG.http.runnersReplaceFromFile, {
+    method: 'POST',
+    body: formData,
+  })
+  if (!res.ok) {
+    throw new Error(`Error del servidor (${res.status})`)
+  }
+  return res.json()
+}

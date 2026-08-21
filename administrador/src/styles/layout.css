@@ -79,6 +79,61 @@
   cursor: default;
 }
 
+/* ---------- Menú de tres puntos (header) ---------- */
+
+.header-menu {
+  position: relative;
+}
+
+.header-menu-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  background: transparent;
+  color: var(--text-on-chrome);
+  border: 1.5px solid rgba(244, 247, 250, 0.3);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.header-menu-trigger:hover {
+  border-color: var(--text-on-chrome);
+  background: rgba(244, 247, 250, 0.08);
+}
+
+.header-menu-dropdown {
+  position: fixed;
+  z-index: 1000;
+  min-width: 240px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-chrome);
+  padding: 6px;
+}
+
+.header-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  color: var(--text);
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.header-menu-item:hover {
+  background: var(--surface-sunken);
+  color: var(--accent-primary);
+}
+
 /* ---------- Navegación por pestañas ---------- */
 
 .tabs {
