@@ -22,29 +22,35 @@
   position: relative;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
   background: linear-gradient(180deg, var(--surface), var(--surface-sunken));
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: clamp(16px, 1.4vw, 24px);
+  padding: clamp(8px, 1.6vh, 24px) clamp(16px, 1.4vw, 24px);
   box-shadow: var(--shadow-card);
 }
 
 .podium-card-title {
-  font-size: clamp(0.95rem, 1.15vw, 1.15rem);
+  font-size: clamp(0.8rem, min(1.15vw, 1.9vh), 1.15rem);
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text);
   text-align: center;
-  padding-bottom: 12px;
-  margin-bottom: 12px;
+  flex-shrink: 0;
+  padding-bottom: clamp(4px, 1vh, 12px);
+  margin-bottom: clamp(4px, 1vh, 12px);
   border-bottom: 1px solid var(--border);
 }
 
 .podium-list {
   display: flex;
+  flex: 1;
+  min-height: 0;
   flex-direction: column;
-  gap: 10px;
+  justify-content: space-between;
+  gap: clamp(4px, 1vh, 10px);
 }
 
 .podium-place {
@@ -52,7 +58,8 @@
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
+  min-height: 0;
+  padding: clamp(4px, 1.2vh, 10px) 14px;
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid transparent;
@@ -64,12 +71,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(30px, 2.6vw, 38px);
-  height: clamp(30px, 2.6vw, 38px);
+  width: clamp(24px, min(2.6vw, 4vh), 38px);
+  height: clamp(24px, min(2.6vw, 4vh), 38px);
   border-radius: 50%;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(0.85rem, 1vw, 1rem);
+  font-size: clamp(0.75rem, min(1vw, 1.6vh), 1rem);
   color: var(--navy-void);
   background: var(--text-faint);
   flex-shrink: 0;
@@ -109,7 +116,7 @@
   white-space: nowrap;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(0.95rem, 1.15vw, 1.15rem);
+  font-size: clamp(0.8rem, min(1.15vw, 1.9vh), 1.15rem);
   color: var(--text);
 }
 
@@ -122,7 +129,7 @@
 .podium-time {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(0.85rem, 1vw, 1rem);
+  font-size: clamp(0.75rem, min(1vw, 1.6vh), 1rem);
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -152,6 +159,7 @@
   position: relative;
   z-index: 1;
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   gap: 10px;

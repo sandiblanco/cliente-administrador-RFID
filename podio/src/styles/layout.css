@@ -1,20 +1,22 @@
 .app {
   position: relative;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: clamp(20px, 2.4vw, 48px) clamp(20px, 3.2vw, 64px) clamp(28px, 3vw, 56px);
-  gap: clamp(20px, 2.4vw, 40px);
+  padding: clamp(10px, 2vh, 48px) clamp(20px, 3.2vw, 64px) clamp(14px, 2.4vh, 56px);
+  gap: clamp(8px, 1.6vh, 40px);
 }
 
 .header {
   position: relative;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
   align-items: center;
-  gap: 10px;
+  gap: clamp(4px, 0.8vh, 10px);
   text-align: center;
-  padding-top: 6px;
+  padding-top: clamp(0px, 0.6vh, 6px);
 }
 
 .header-live {
@@ -43,7 +45,7 @@
 }
 
 .header-title {
-  font-size: clamp(1.9rem, 4vw, 3.2rem);
+  font-size: clamp(1.4rem, min(4vw, 5.5vh), 3.2rem);
   font-weight: 700;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -61,6 +63,7 @@
 
 .error-banner {
   display: flex;
+  flex-shrink: 0;
   align-items: center;
   gap: 10px;
   justify-content: center;
@@ -77,19 +80,33 @@
   z-index: 1;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: clamp(14px, 1.6vw, 26px);
+  grid-template-rows: repeat(2, 1fr);
+  gap: clamp(8px, 1.6vh, 26px);
   flex: 1;
+  min-height: 0;
 }
 
 @media (max-width: 1080px) {
   .podium-grid {
     grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
   }
 }
 
 @media (max-width: 640px) {
+  body {
+    overflow-y: auto;
+  }
+
+  .app {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
   .podium-grid {
     grid-template-columns: 1fr;
+    grid-template-rows: repeat(6, auto);
   }
 }
 
