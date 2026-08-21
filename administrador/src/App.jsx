@@ -186,6 +186,7 @@ export default function App() {
 
       {activeTab === 'upload-runners' && (
         <UploadRunnersPage
+          runners={runners}
           onDone={() => {
             setActiveTab('runners')
             reload()

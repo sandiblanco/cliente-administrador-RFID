@@ -6,12 +6,17 @@ import UploadRunnersConfirm from './UploadRunnersConfirm'
 // Página de "Subir archivo de corredores" — llegada desde el menú de tres
 // puntos del header. Toma un .xlsx (export del formulario de inscripción),
 // lo envía al backend, y reemplaza TODO el listado de corredores con lo
-// que venga en el archivo.
-export default function UploadRunnersPage({ onDone }) {
+// que venga en el archivo. El tag_id ya asignado a mano se preserva del
+// lado del servidor cuando el runner_id coincide (ver
+// replace_runners_bulk_from_file) — acá solo se muestra el resultado de
+// esa preservación.
+export default function UploadRunnersPage({ runners, onDone }) {
   const fileInputRef = useRef(null)
   const [file, setFile] = useState(null)
   const [confirming, setConfirming] = useState(false)
   const [result, setResult] = useState(null)
+
+  const taggedCount = runners?.filter((r) => r.tagId).length ?? 0
 
   const handleFileChange = (event) => {
     const selected = event.target.files?.[0] ?? null
@@ -73,6 +78,18 @@ export default function UploadRunnersPage({ onDone }) {
                 <> · <strong>{result.skipped.length}</strong> filas omitidas</>
               ) : null}
             </p>
+            {(result.tags_preserved > 0 || result.tags_lost > 0) && (
+              <p className="upload-runners-tags-summary">
+                <strong>{result.tags_preserved}</strong> tags RFID preservados
+                {result.tags_lost > 0 ? (
+                  <>
+                    {' '}
+                    · <strong>{result.tags_lost}</strong> tags perdidos (el
+                    corredor ya no está en el archivo nuevo)
+                  </>
+                ) : null}
+              </p>
+            )}
             {result.skipped?.length > 0 && (
               <ul className="upload-runners-skipped">
                 {result.skipped.map((s, i) => (
@@ -93,6 +110,7 @@ export default function UploadRunnersPage({ onDone }) {
       {confirming && (
         <UploadRunnersConfirm
           fileName={file?.name}
+          taggedCount={taggedCount}
           onConfirm={handleUpload}
           onClose={() => setConfirming(false)}
         />
