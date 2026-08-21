@@ -1,10 +1,11 @@
 // Convenciones de la carrera:
 // - category: "5K" (recreativo, sin podio) o "10K" (competitivo, con podio).
-// - subcategory (solo aplica al 10K): veterano, mayor, master, informatico.
+// - subcategory (solo aplica al 10K): veterano, mayor, master.
 // - gender: "M" o "F".
 //
-// Se premian los primeros puestos de las 8 combinaciones de
-// subcategoría × género dentro del 10K.
+// Se premian los primeros puestos de las 6 combinaciones de
+// subcategoría × género dentro del 10K. (Informático se eliminó como
+// subcategoría premiada — ya no se necesita.)
 
 const GENDERS = [
   { value: 'M', label: 'Hombres' },
@@ -15,7 +16,6 @@ const SUBCATEGORIES = [
   { value: 'veterano', label: 'Veterano' },
   { value: 'mayor', label: 'Mayor' },
   { value: 'master', label: 'Master' },
-  { value: 'informatico', label: 'Informático' },
 ]
 
 export const normalize = (value) => (value ?? '').toString().trim().toLowerCase()
@@ -41,7 +41,7 @@ export function formatCategoryLabel(runner) {
   return parts.length ? `${category} · ${parts.join(' ')}` : category
 }
 
-// Las 8 modalidades premiadas: subcategoría × género, dentro del 10K.
+// Las 6 modalidades premiadas: subcategoría × género, dentro del 10K.
 export const PODIUM_GROUPS = SUBCATEGORIES.flatMap((subcategory) =>
   GENDERS.map((gender) => ({
     id: `10k-${subcategory.value}-${gender.value}`,
