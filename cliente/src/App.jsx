@@ -7,6 +7,7 @@ import { getRunners, sendEvent, ApiConnectionError } from './services/api.js'
 import { offlineQueue } from './services/offlineQueue.js'
 import { network } from './services/network.js'
 import { syncService } from './services/sync.js'
+import { nowAsNaiveTimestamp } from './utils/nowAsNaiveTimestamp.js'
 import {
   connectSocket,
   disconnectSocket,
@@ -216,7 +217,7 @@ export default function App() {
         return
       }
 
-      const timestamp = new Date().toISOString()
+      const timestamp = nowAsNaiveTimestamp()
       setPendingIds((prev) => [...prev, id])
 
       try {
