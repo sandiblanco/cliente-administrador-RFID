@@ -17,9 +17,17 @@
   filter: drop-shadow(0 0 10px rgba(0, 201, 216, 0.55));
 }
 
-/* -- Tarjeta de modalidad (subcategoría × género) -- */
+/* -- Tarjeta de modalidad (subcategoría × género) --
+   container-type: size ata el tipografiado a la altura y el ancho
+   REALES de la tarjeta (vía cqw/cqh) en lugar del viewport completo.
+   Con vw/vh, el cálculo asumía cuánto le tocaba a cada tarjeta del
+   grid — en una pantalla baja (p. ej. 1366×768) esa suposición se
+   queda corta y el podio se ve achatado; con container queries se
+   escala igual de bien en un notebook bajo, un TV grande o un
+   proyector de auditorio, porque siempre parte del tamaño real. */
 .podium-card {
   position: relative;
+  container-type: size;
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -27,20 +35,20 @@
   background: linear-gradient(180deg, var(--surface), var(--surface-sunken));
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: clamp(8px, 1.6vh, 24px) clamp(16px, 1.4vw, 24px);
+  padding: clamp(8px, 3cqh, 28px) clamp(14px, 4cqw, 28px);
   box-shadow: var(--shadow-card);
 }
 
 .podium-card-title {
-  font-size: clamp(0.8rem, min(1.15vw, 1.9vh), 1.15rem);
+  font-size: clamp(0.85rem, min(4.2cqw, 7.5cqh), 1.6rem);
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text);
   text-align: center;
   flex-shrink: 0;
-  padding-bottom: clamp(4px, 1vh, 12px);
-  margin-bottom: clamp(4px, 1vh, 12px);
+  padding-bottom: clamp(4px, 2cqh, 14px);
+  margin-bottom: clamp(4px, 2cqh, 14px);
   border-bottom: 1px solid var(--border);
 }
 
@@ -50,16 +58,16 @@
   min-height: 0;
   flex-direction: column;
   justify-content: space-between;
-  gap: clamp(4px, 1vh, 10px);
+  gap: clamp(4px, 1.8cqh, 14px);
 }
 
 .podium-place {
   display: grid;
   grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 12px;
+  gap: clamp(8px, 2.4cqw, 18px);
   min-height: 0;
-  padding: clamp(4px, 1.2vh, 10px) 14px;
+  padding: clamp(4px, 2.2cqh, 14px) clamp(10px, 2.6cqw, 18px);
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid transparent;
@@ -71,12 +79,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(24px, min(2.6vw, 4vh), 38px);
-  height: clamp(24px, min(2.6vw, 4vh), 38px);
+  width: clamp(26px, min(9cqw, 11.5cqh), 48px);
+  height: clamp(26px, min(9cqw, 11.5cqh), 48px);
   border-radius: 50%;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(0.75rem, min(1vw, 1.6vh), 1rem);
+  font-size: clamp(0.78rem, min(3.4cqw, 4.6cqh), 1.2rem);
   color: var(--navy-void);
   background: var(--text-faint);
   flex-shrink: 0;
@@ -116,7 +124,7 @@
   white-space: nowrap;
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(0.8rem, min(1.15vw, 1.9vh), 1.15rem);
+  font-size: clamp(0.85rem, min(4cqw, 6.5cqh), 1.45rem);
   color: var(--text);
 }
 
@@ -129,7 +137,7 @@
 .podium-time {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: clamp(0.75rem, min(1vw, 1.6vh), 1rem);
+  font-size: clamp(0.78rem, min(3.4cqw, 4.6cqh), 1.2rem);
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;

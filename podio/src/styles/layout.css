@@ -19,6 +19,25 @@
   padding-top: clamp(0px, 0.6vh, 6px);
 }
 
+/* En pantallas bajas (notebooks 1366×768 y similares) el podio —lo que
+   la gente vino a ver— tiene prioridad sobre la cabecera decorativa:
+   se achica la insignia y se ajustan los espacios para devolverle
+   altura al grid en vez de que cada tarjeta la pierda. */
+@media (max-height: 820px) {
+  .header {
+    gap: 2px;
+  }
+
+  .badge {
+    width: clamp(40px, 5vh, 64px);
+    height: clamp(40px, 5vh, 64px);
+  }
+
+  .header-eyebrow {
+    margin-top: 0;
+  }
+}
+
 .header-live {
   display: inline-flex;
   align-items: center;
