@@ -1,0 +1,75 @@
+/* Ambientación de pantalla completa — recrea el halo de partículas del
+   logo de marca (azul → cian → verde) detrás de la cabecera, más una
+   grilla técnica sutil de fondo. Todo generado con gradientes, sin
+   assets de imagen, para no depender de un archivo pesado en un
+   contenedor que solo sirve estático. */
+
+body {
+  background:
+    radial-gradient(circle at 50% -6%, rgba(0, 143, 245, 0.16), transparent 45%),
+    radial-gradient(circle at 12% 18%, rgba(0, 230, 195, 0.08), transparent 40%),
+    radial-gradient(circle at 88% 22%, rgba(0, 201, 216, 0.08), transparent 40%),
+    linear-gradient(var(--navy-void), var(--navy-void));
+  background-color: var(--navy-void);
+}
+
+.app::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(156, 177, 199, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(156, 177, 199, 0.05) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(ellipse at 50% 0%, black 0%, transparent 70%);
+}
+
+.badge::after {
+  content: '';
+  position: absolute;
+  inset: -60%;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(0, 201, 216, 0.35),
+    rgba(0, 143, 245, 0.14) 45%,
+    transparent 72%
+  );
+  filter: blur(2px);
+  animation: halo-breathe 4.5s var(--ease) infinite alternate;
+}
+
+@keyframes halo-breathe {
+  from {
+    opacity: 0.55;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+.header-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-success);
+  box-shadow: var(--glow-live);
+  animation: live-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: scale(0.75);
+  }
+}

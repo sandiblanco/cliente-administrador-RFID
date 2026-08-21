@@ -47,7 +47,7 @@ ssh_cmd "
   fi
 "
 
-echo "==> Reconstruyendo y reiniciando contenedores (cliente/administrador)"
+echo "==> Reconstruyendo y reiniciando contenedores (cliente/administrador/podio)"
 ssh_cmd "export PATH=\$PATH:/usr/local/bin; cd '$REMOTE_DIR' && echo '$SSH_PASS' | sudo -S docker compose up -d --build --remove-orphans"
 
 echo "==> Limpiando imágenes huérfanas"
@@ -68,6 +68,12 @@ if curl -sf --max-time 8 -o /dev/null "http://${SSH_HOST}:8081/"; then
   echo "administrador responde OK en http://${SSH_HOST}:8081"
 else
   echo "administrador NO respondió en http://${SSH_HOST}:8081 -- revisa 'docker compose logs administrador'" >&2
+  ok=0
+fi
+if curl -sf --max-time 8 -o /dev/null "http://${SSH_HOST}:8084/"; then
+  echo "podio responde OK en http://${SSH_HOST}:8084"
+else
+  echo "podio NO respondió en http://${SSH_HOST}:8084 -- revisa 'docker compose logs podio'" >&2
   ok=0
 fi
 [ "$ok" -eq 1 ]

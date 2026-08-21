@@ -1,0 +1,107 @@
+.app {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(20px, 2.4vw, 48px) clamp(20px, 3.2vw, 64px) clamp(28px, 3vw, 56px);
+  gap: clamp(20px, 2.4vw, 40px);
+}
+
+.header {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  padding-top: 6px;
+}
+
+.header-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 14px;
+  border-radius: 999px;
+  background: rgba(91, 227, 165, 0.1);
+  border: 1px solid rgba(91, 227, 165, 0.3);
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--accent-success);
+}
+
+.header-eyebrow {
+  margin: 4px 0 0;
+  font-family: var(--font-display);
+  font-size: clamp(0.78rem, 1vw, 0.95rem);
+  font-weight: 600;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.header-title {
+  font-size: clamp(1.9rem, 4vw, 3.2rem);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: linear-gradient(120deg, var(--white-cold), var(--cyan-tech) 70%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.header-sub {
+  font-family: var(--font-display);
+  font-size: clamp(0.85rem, 1.1vw, 1.05rem);
+  color: var(--text-faint);
+}
+
+.error-banner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+  padding: 10px 16px;
+  border-radius: var(--radius-sm);
+  background: var(--accent-error-bg);
+  color: var(--accent-error);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+}
+
+.podium-grid {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(14px, 1.6vw, 26px);
+  flex: 1;
+}
+
+@media (max-width: 1080px) {
+  .podium-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .podium-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.footer {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+}
