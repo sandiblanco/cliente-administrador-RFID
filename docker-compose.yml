@@ -21,3 +21,14 @@ services:
     restart: unless-stopped
     ports:
       - "8081:80"
+
+  podio:
+    build:
+      context: ./podio
+      args:
+        VITE_API_URL: http://172.24.160.5:8000
+        VITE_SOCKET_URL: ws://172.24.160.5:8000/ws/live
+    container_name: rfid-podio
+    restart: unless-stopped
+    ports:
+      - "8084:80"

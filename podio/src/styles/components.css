@@ -1,0 +1,165 @@
+/* -- Insignia de cabecera: el corredor del logo de marca, con halo -- */
+.badge {
+  position: relative;
+  width: clamp(64px, 6vw, 92px);
+  height: clamp(64px, 6vw, 92px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.badge-icon {
+  position: relative;
+  z-index: 1;
+  width: 58%;
+  height: 58%;
+  color: var(--white-cold);
+  filter: drop-shadow(0 0 10px rgba(0, 201, 216, 0.55));
+}
+
+/* -- Tarjeta de modalidad (subcategoría × género) -- */
+.podium-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, var(--surface), var(--surface-sunken));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: clamp(16px, 1.4vw, 24px);
+  box-shadow: var(--shadow-card);
+}
+
+.podium-card-title {
+  font-size: clamp(0.95rem, 1.15vw, 1.15rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  text-align: center;
+  padding-bottom: 12px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.podium-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.podium-place {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid transparent;
+  transition: box-shadow 0.4s var(--ease), transform 0.4s var(--ease),
+    background 0.4s var(--ease);
+}
+
+.podium-medal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(30px, 2.6vw, 38px);
+  height: clamp(30px, 2.6vw, 38px);
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(0.85rem, 1vw, 1rem);
+  color: var(--navy-void);
+  background: var(--text-faint);
+  flex-shrink: 0;
+}
+
+.podium-place-1 {
+  border-color: rgba(255, 209, 102, 0.4);
+  background: var(--gold-tint);
+  box-shadow: var(--glow-gold);
+}
+.podium-place-1 .podium-medal {
+  background: linear-gradient(140deg, var(--gold-strong), var(--gold));
+}
+
+.podium-place-2 {
+  border-color: rgba(215, 226, 238, 0.28);
+  background: var(--silver-tint);
+  box-shadow: var(--glow-silver);
+}
+.podium-place-2 .podium-medal {
+  background: linear-gradient(140deg, var(--silver-strong), var(--silver));
+}
+
+.podium-place-3 {
+  border-color: rgba(226, 167, 111, 0.32);
+  background: var(--bronze-tint);
+  box-shadow: var(--glow-bronze);
+}
+.podium-place-3 .podium-medal {
+  background: linear-gradient(140deg, var(--bronze-strong), var(--bronze));
+}
+
+.podium-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(0.95rem, 1.15vw, 1.15rem);
+  color: var(--text);
+}
+
+.podium-name-empty {
+  color: var(--text-faint);
+  font-weight: 500;
+  font-style: normal;
+}
+
+.podium-time {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(0.85rem, 1vw, 1rem);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.podium-place-1 .podium-time {
+  color: var(--gold);
+}
+
+/* Destello breve cuando un puesto cambia (nueva llegada o corrección) */
+.podium-place-updated {
+  animation: place-flash 1.8s var(--ease);
+}
+
+@keyframes place-flash {
+  0% {
+    transform: scale(1.035);
+    box-shadow: 0 0 0 3px rgba(0, 201, 216, 0.55), 0 0 30px rgba(0, 201, 216, 0.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* -- Nota informativa 5K (recreativa, sin podio) -- */
+.note-5k {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: clamp(0.8rem, 0.95vw, 0.95rem);
+  color: var(--text-faint);
+}
+
+.note-5k strong {
+  color: var(--text-muted);
+}
