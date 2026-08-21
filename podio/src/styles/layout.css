@@ -129,6 +129,32 @@
   }
 }
 
+/* Ventanas muy bajas (celular en horizontal, o cualquier ventana chica
+   en un monitor de escritorio) rompían el podio: las filas del grid
+   son `1fr` y `.podium-card` usa container-type:size para escalar por
+   cqh, pero si esa fracción de alto termina siendo menor que el
+   contenido, size containment la trata como intrínsecamente 0 en vez
+   de desbordar — la tarjeta, la lista y los nombres colapsan a 0px y
+   desaparecen (no se truncan: se pierden del todo). Igual que en el
+   breakpoint de ancho angosto, la salida es dejar de forzar todo
+   dentro de 100vh y permitir que la página scrollee. */
+@media (max-height: 480px) {
+  body {
+    overflow-y: auto;
+  }
+
+  .app {
+    height: auto;
+    min-height: 100vh;
+    overflow: visible;
+  }
+
+  .podium-grid {
+    grid-template-rows: none;
+    grid-auto-rows: auto;
+  }
+}
+
 .footer {
   position: relative;
   z-index: 1;

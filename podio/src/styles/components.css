@@ -147,6 +147,82 @@
   color: var(--gold);
 }
 
+/* Tarjeta angosta (columna única en celular, o 2 columnas en tablet
+   vertical): en una sola línea "medalla · nombre · tiempo" un nombre
+   con dos nombres y dos apellidos —lo normal en la carrera— no entra
+   y el ellipsis se come casi todo. Por debajo de ~380px de ancho de
+   tarjeta se apila: medalla y tiempo arriba, nombre abajo pudiendo
+   ocupar dos líneas en vez de perderse en "...". */
+@container (max-width: 380px) {
+  .podium-place {
+    grid-template-columns: auto 1fr;
+    grid-template-areas: 'medal time' 'name name';
+    row-gap: 2px;
+  }
+
+  .podium-medal {
+    grid-area: medal;
+  }
+
+  .podium-time {
+    grid-area: time;
+    justify-self: end;
+  }
+
+  .podium-name {
+    grid-area: name;
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    line-height: 1.15;
+  }
+}
+
+/* En columna única (celular) o con ventana muy baja, la tarjeta ya no
+   recibe una altura definida del grid (filas auto / .app en auto) —
+   container-type:size la colapsaría a 0 (ver comentario en layout.css).
+   Se pasa a inline-size (solo ancho, sigue sirviendo para el
+   @container de arriba y para escalar con cqw) y se le da un piso de
+   alto para que nunca se aplaste; el resto de las medidas que usaban
+   cqh se fijan a algo que no depende del contenedor. */
+@media (max-width: 640px), (max-height: 480px) {
+  .podium-card {
+    container-type: inline-size;
+    min-height: 230px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+  }
+
+  .podium-card-title {
+    font-size: clamp(0.85rem, 4.2cqw, 1.3rem);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+  }
+
+  .podium-list {
+    gap: 8px;
+  }
+
+  .podium-place {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+
+  .podium-medal {
+    width: clamp(26px, 9cqw, 38px);
+    height: clamp(26px, 9cqw, 38px);
+    font-size: clamp(0.78rem, 3.4cqw, 1rem);
+  }
+
+  .podium-name {
+    font-size: clamp(0.85rem, 4.5cqw, 1.15rem);
+  }
+
+  .podium-time {
+    font-size: clamp(0.78rem, 3.4cqw, 1rem);
+  }
+}
+
 /* Destello breve cuando un puesto cambia (nueva llegada o corrección) */
 .podium-place-updated {
   animation: place-flash 1.8s var(--ease);
