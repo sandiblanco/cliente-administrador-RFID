@@ -118,6 +118,26 @@ export function UploadIcon(props) {
   )
 }
 
+export function TagIcon(props) {
+  return (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M8.6 1.8H3.4a1.6 1.6 0 0 0-1.6 1.6v5.2c0 .42.17.83.47 1.13l5.9 5.9a1.6 1.6 0 0 0 2.26 0l4.44-4.44a1.6 1.6 0 0 0 0-2.26l-5.9-5.9a1.6 1.6 0 0 0-1.13-.47Z" />
+      <circle cx="5.2" cy="5.2" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  )
+}
+
 export function SearchIcon(props) {
   return (
     <svg

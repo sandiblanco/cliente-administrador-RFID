@@ -18,6 +18,7 @@ async function request(url, options) {
 function mapRunner(runner, timestamp, elapsedSeconds) {
   return {
     id: runner.runner_id,
+    tagId: runner.tag_id ?? null,
     name: runner.name,
     timestamp,
     elapsedSeconds,

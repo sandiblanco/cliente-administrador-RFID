@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useRunners } from './hooks/useRunners'
 import { useTheme } from './hooks/useTheme'
 import { useActivityLog } from './hooks/useActivityLog'
-import { deleteResultTime, updateResultTime } from './api/client'
+import { deleteResultTime, updateResultTime, updateRunner } from './api/client'
 import CONFIG from './config'
 import Dashboard from './components/Dashboard'
 import RunnerTable from './components/RunnerTable'
@@ -54,6 +54,24 @@ export default function App() {
       throw new Error(res.message || 'No se pudo eliminar el tiempo')
     }
     applyUpdate({ id: runnerId, timestamp: null })
+  }
+
+  // PUT /runners/{id} espera el Runner completo, no un parche — se
+  // reconstruye a partir de lo que ya tenemos en memoria para esa fila
+  // en vez de pedirlo de nuevo al servidor.
+  const handleUpdateTag = async (runner, tagId) => {
+    const res = await updateRunner(runner.id, {
+      runner_id: runner.id,
+      tag_id: tagId,
+      name: runner.name,
+      gender: runner.gender,
+      category: runner.category,
+      subcategory: runner.subcategory,
+    })
+    if (res.status !== 'ok') {
+      throw new Error(res.message || 'No se pudo actualizar el tag')
+    }
+    applyUpdate({ id: runner.id, tagId })
   }
 
   const runnerCategoryFilter =
@@ -144,6 +162,7 @@ export default function App() {
             }
             onEditTime={handleEditTime}
             onDeleteTime={handleDeleteTime}
+            onUpdateTag={handleUpdateTag}
             showCategory
           />
         </section>

@@ -4,20 +4,33 @@ import { STATUS, getStatus } from '../utils/status'
 import { formatCategoryLabel } from '../utils/category'
 import EditTimeModal from './EditTimeModal'
 import DeleteTimeConfirm from './DeleteTimeConfirm'
+import TagEditButton from './TagEditButton'
 
 export default function RunnerTable({
   runners,
   emptyMessage = 'Sin corredores',
   onEditTime,
   onDeleteTime,
+  onUpdateTag,
   showCategory = false,
   showRank = false,
 }) {
   const [editingRunner, setEditingRunner] = useState(null)
   const [deletingRunner, setDeletingRunner] = useState(null)
 
+  // Cuenta lo que efectivamente se está mostrando: `runners` ya viene
+  // filtrado por el filtro de modalidad y/o la búsqueda activa en quien
+  // llama a esta tabla, así que este número siempre refleja lo que hay
+  // en pantalla, no el total sin filtrar.
+  const countLabel = `${runners.length} ${runners.length === 1 ? 'corredor' : 'corredores'}`
+
   if (runners.length === 0) {
-    return <p className="empty">{emptyMessage}</p>
+    return (
+      <>
+        <p className="table-count table-count-standalone">{countLabel}</p>
+        <p className="empty">{emptyMessage}</p>
+      </>
+    )
   }
 
   const statusClass = (runner) =>
@@ -28,6 +41,7 @@ export default function RunnerTable({
 
   return (
     <div className="table-wrapper">
+      <p className="table-count">{countLabel}</p>
       <table>
         <thead>
           <tr>
@@ -48,7 +62,17 @@ export default function RunnerTable({
                   <span className="rank">{index + 1}</span>
                 </td>
               )}
-              <td>{runner.id}</td>
+              <td>
+                <span className="id-cell">
+                  {runner.id}
+                  {onUpdateTag && (
+                    <TagEditButton
+                      runner={runner}
+                      onSave={(tagId) => onUpdateTag(runner, tagId)}
+                    />
+                  )}
+                </span>
+              </td>
               <td>{runner.name}</td>
               {showCategory && (
                 <td>
