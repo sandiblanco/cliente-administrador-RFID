@@ -69,5 +69,13 @@ export const RESULT_FILTERS = [
     label: '5K',
     match: (runner) => normalize(runner.category) === '5k',
   },
+  // Agregado del 10K completo, además del desglose por PODIUM_GROUPS de
+  // abajo (subcategoría × género) — para ver todos los finalizados del
+  // 10K juntos sin tener que ir grupo por grupo, igual que Corredores.
+  {
+    id: '10k',
+    label: '10K',
+    match: (runner) => normalize(runner.category) === '10k',
+  },
   ...PODIUM_GROUPS,
 ]
