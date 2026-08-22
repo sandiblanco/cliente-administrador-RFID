@@ -47,6 +47,9 @@ ssh_cmd "
   fi
 "
 
+echo "==> Asegurando red compartida rfid-net (proxy Nginx -> backend)"
+ssh_cmd "export PATH=\$PATH:/usr/local/bin; echo '$SSH_PASS' | sudo -S docker network create rfid-net 2>/dev/null || true"
+
 echo "==> Reconstruyendo y reiniciando contenedores (cliente/administrador/podio)"
 ssh_cmd "export PATH=\$PATH:/usr/local/bin; cd '$REMOTE_DIR' && echo '$SSH_PASS' | sudo -S docker compose up -d --build --remove-orphans"
 

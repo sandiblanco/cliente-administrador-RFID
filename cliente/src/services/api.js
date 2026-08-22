@@ -16,7 +16,14 @@ function saveMockResult(runnerId, timestamp, elapsedSeconds) {
   localStorage.setItem(MOCK_RESULTS_KEY, JSON.stringify(results))
 }
 
-export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+// En dev (npm run dev) sin VITE_API_URL definido, apunta al backend local.
+// En producción (build de Docker), sin VITE_API_URL definido, usa el mismo
+// origin con el que se cargó la página: así funciona igual accediendo por
+// LAN, Tailscale o cualquier hostname, sin fijar ninguna IP en el build.
+// El backend queda detrás de Nginx (mismo puerto) vía proxy_pass.
+export const API_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? window.location.origin : 'http://localhost:8000')
 
 // Sin timeout, un fetch en una conexión que no falla limpio (paquetes
 // perdidos en vez de conexión rechazada) puede quedar colgado decenas de

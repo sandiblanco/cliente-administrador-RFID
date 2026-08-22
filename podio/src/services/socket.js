@@ -21,8 +21,16 @@
 //
 // Nota: es un WebSocket nativo, no Socket.IO — no usar socket.io-client.
 
-const SOCKET_URL =
-  import.meta.env.VITE_SOCKET_URL || 'ws://localhost:8000/ws/live'
+// Mismo criterio que cliente/administrador (ver services/api.js): en
+// producción, sin VITE_SOCKET_URL definido, deriva el WebSocket del origin
+// actual en vez de una IP fija.
+function defaultSocketUrl() {
+  if (!import.meta.env.PROD) return 'ws://localhost:8000/ws/live'
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+  return `${protocol}//${window.location.host}/ws/live`
+}
+
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || defaultSocketUrl()
 
 const RECONNECT_BASE_DELAY_MS = 1000
 const RECONNECT_MAX_DELAY_MS = 30000

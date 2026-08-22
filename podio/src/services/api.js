@@ -3,7 +3,12 @@
 // visualización (se despliega en su propio puerto, sin backend de
 // escritura, para no exponer esas rutas en la pantalla pública).
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+// Mismo criterio que cliente/administrador: en producción, sin
+// VITE_API_URL definido, usa el origin actual en vez de una IP fija, para
+// que funcione igual por LAN o por Tailscale (backend detrás de Nginx).
+const API_URL =
+  import.meta.env.VITE_API_URL ||
+  (import.meta.env.PROD ? window.location.origin : 'http://localhost:8000')
 
 const ENDPOINTS = {
   runners: '/runners',

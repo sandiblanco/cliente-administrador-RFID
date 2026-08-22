@@ -19,8 +19,16 @@
 // realidad solo se editó. Va a un handler separado (onRunnerUpdated).
 // { type: "runner", runner_id: "34", name: "...", category: "10K", ... }
 
-export const SOCKET_URL =
-  import.meta.env.VITE_SOCKET_URL || 'ws://localhost:8000/ws/live'
+// Mismo criterio que API_URL (ver services/api.js): en producción, sin
+// VITE_SOCKET_URL definido, deriva el WebSocket del origin actual en vez de
+// una IP fija, para que funcione igual por LAN o por Tailscale.
+function defaultSocketUrl() {
+  if (!import.meta.env.PROD) return 'ws://localhost:8000/ws/live'
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+  return `${protocol}//${window.location.host}/ws/live`
+}
+
+export const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || defaultSocketUrl()
 
 let _socket = null
 let _runnerFinishedHandler = null

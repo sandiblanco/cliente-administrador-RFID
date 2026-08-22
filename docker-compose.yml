@@ -2,33 +2,43 @@ services:
   cliente:
     build:
       context: ./cliente
-      args:
-        VITE_API_URL: http://172.24.160.5:8000
-        VITE_SOCKET_URL: ws://172.24.160.5:8000/ws/live
     container_name: rfid-cliente
     restart: unless-stopped
     ports:
       # 8080 ya está en uso en el NAS de despliegue (172.24.160.6).
       - "8083:80"
+    networks:
+      - default
+      - rfid-net
 
   administrador:
     build:
       context: ./administrador
-      args:
-        VITE_SERVER_URL: http://172.24.160.5:8000
-        VITE_SOCKET_URL: ws://172.24.160.5:8000/ws/live
     container_name: rfid-administrador
     restart: unless-stopped
     ports:
       - "8081:80"
+    networks:
+      - default
+      - rfid-net
 
   podio:
     build:
       context: ./podio
-      args:
-        VITE_API_URL: http://172.24.160.5:8000
-        VITE_SOCKET_URL: ws://172.24.160.5:8000/ws/live
     container_name: rfid-podio
     restart: unless-stopped
     ports:
       - "8084:80"
+    networks:
+      - default
+      - rfid-net
+
+networks:
+  # Red compartida con el stack de rfid_system_carrera_del_informatico_2026
+  # (ver docker-compose.yml de ese repo): permite que Nginx, en cada uno de
+  # estos contenedores, haga proxy_pass al backend por su container_name
+  # ("carrera-server") sin depender de ninguna IP de LAN o Tailscale. Se
+  # crea una sola vez con `docker network create rfid-net` (o la crean los
+  # deploy.sh de ambos repos si no existe).
+  rfid-net:
+    external: true
