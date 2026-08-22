@@ -19,21 +19,23 @@ export default function ResultsPanel({ runners, onEditTime, onDeleteTime }) {
 
   return (
     <div>
-      <div className="filter-buttons" role="tablist" aria-label="Modalidades">
-        {RESULT_FILTERS.map((filter) => (
-          <button
-            key={filter.id}
-            type="button"
-            role="tab"
-            aria-selected={activeFilterId === filter.id}
-            className={`filter-btn ${
-              activeFilterId === filter.id ? 'filter-btn-active' : ''
-            }`}
-            onClick={() => setActiveFilterId(filter.id)}
-          >
-            {filter.label}
-          </button>
-        ))}
+      <div className="sticky-toolbar">
+        <div className="filter-buttons" role="tablist" aria-label="Modalidades">
+          {RESULT_FILTERS.map((filter) => (
+            <button
+              key={filter.id}
+              type="button"
+              role="tab"
+              aria-selected={activeFilterId === filter.id}
+              className={`filter-btn ${
+                activeFilterId === filter.id ? 'filter-btn-active' : ''
+              }`}
+              onClick={() => setActiveFilterId(filter.id)}
+            >
+              {filter.label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <RunnerTable

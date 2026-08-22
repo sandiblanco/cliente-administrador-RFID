@@ -136,11 +136,20 @@
 
 /* ---------- Navegación por pestañas ---------- */
 
+/* Pegada justo debajo del header (que también es sticky, top:0) — su
+   offset (--tabs-h se mide a partir de acá) se calcula en App.jsx con
+   ResizeObserver, porque la altura del header varía según pantalla y
+   contenido. */
 .tabs {
+  position: sticky;
+  top: var(--header-h, 84px);
+  z-index: 9;
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   margin: 24px 0 20px;
+  background: var(--bg);
+  padding: 4px 0;
 }
 
 .tab {

@@ -371,6 +371,19 @@
   color: var(--text-muted);
 }
 
+/* Envuelve la barra de filtros (y, en Corredores, también la de
+   búsqueda) de cada sección — pegada justo debajo de header+tabs
+   (ambos sticky), para que no se pierdan de vista al scrollear una
+   tabla larga. --header-h/--tabs-h los mide App.jsx con
+   ResizeObserver, porque esas dos alturas varían con la pantalla. */
+.sticky-toolbar {
+  position: sticky;
+  top: calc(var(--header-h, 84px) + var(--tabs-h, 50px));
+  z-index: 8;
+  background: var(--bg);
+  padding-top: 6px;
+}
+
 /* ---------- Búsqueda ---------- */
 
 .search-bar {

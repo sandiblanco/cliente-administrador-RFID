@@ -95,7 +95,8 @@ export default function UploadRunnersPage({ runners, onDone }) {
                 {result.skipped.map((s, i) => (
                   <li key={i}>
                     Fila {s.row}
-                    {s.runner_id ? ` (corredor ${s.runner_id})` : ''}: {s.reason}
+                    {s.runner_id ? ` (corredor ${s.runner_id})` : ''}
+                    {s.name ? ` — ${s.name}` : ''}: {s.reason}
                   </li>
                 ))}
               </ul>

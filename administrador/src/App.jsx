@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useRunners } from './hooks/useRunners'
 import { useTheme } from './hooks/useTheme'
 import { useActivityLog } from './hooks/useActivityLog'
@@ -32,6 +32,34 @@ export default function App() {
   const [runnerCategoryFilterId, setRunnerCategoryFilterId] = useState(
     RUNNER_CATEGORY_FILTERS[0].id
   )
+
+  // El header y la barra de tabs son sticky (quedan fijos arriba al
+  // scrollear), y las barras de búsqueda/filtro de cada sección se
+  // apilan pegadas justo debajo — para eso necesitan saber cuánto
+  // espacio ocupan header+tabs, que varía según el contenido (el badge
+  // "Modo demo", el ancho de pantalla que hace wrappear el título,
+  // etc.). Se mide con ResizeObserver en vez de fijarlo a mano, para no
+  // tener que mantener ese número sincronizado a mano con el CSS.
+  const headerRef = useRef(null)
+  const tabsRef = useRef(null)
+
+  useLayoutEffect(() => {
+    const headerEl = headerRef.current
+    const tabsEl = tabsRef.current
+    if (!headerEl || !tabsEl) {
+      return
+    }
+    const root = document.documentElement
+    const updateOffsets = () => {
+      root.style.setProperty('--header-h', `${headerEl.offsetHeight}px`)
+      root.style.setProperty('--tabs-h', `${tabsEl.offsetHeight}px`)
+    }
+    updateOffsets()
+    const observer = new ResizeObserver(updateOffsets)
+    observer.observe(headerEl)
+    observer.observe(tabsEl)
+    return () => observer.disconnect()
+  }, [])
 
   const handleEditTime = async (runnerId, timestamp) => {
     const res = await updateResultTime(runnerId, timestamp)
@@ -113,7 +141,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <header className="header">
+      <header className="header" ref={headerRef}>
         <div>
           <h1>Administrador · Control de tiempos</h1>
           <p className="header-eyebrow">Sistema RFID // Carrera del Informático 2026</p>
@@ -136,7 +164,7 @@ export default function App() {
         </div>
       </header>
 
-      <nav className="tabs" aria-label="Secciones">
+      <nav className="tabs" aria-label="Secciones" ref={tabsRef}>
         {TABS.map((tab) => (
           <button
             key={tab.id}
@@ -163,26 +191,28 @@ export default function App() {
 
       {!loading && activeTab === 'runners' && (
         <section>
-          <div className="runners-toolbar">
-            <div className="filter-buttons" role="tablist" aria-label="Modalidad">
-              {RUNNER_CATEGORY_FILTERS.map((filter) => (
-                <button
-                  key={filter.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={runnerCategoryFilterId === filter.id}
-                  className={`filter-btn ${
-                    runnerCategoryFilterId === filter.id ? 'filter-btn-active' : ''
-                  }`}
-                  onClick={() => setRunnerCategoryFilterId(filter.id)}
-                >
-                  {filter.label}
-                </button>
-              ))}
+          <div className="sticky-toolbar">
+            <div className="runners-toolbar">
+              <div className="filter-buttons" role="tablist" aria-label="Modalidad">
+                {RUNNER_CATEGORY_FILTERS.map((filter) => (
+                  <button
+                    key={filter.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={runnerCategoryFilterId === filter.id}
+                    className={`filter-btn ${
+                      runnerCategoryFilterId === filter.id ? 'filter-btn-active' : ''
+                    }`}
+                    onClick={() => setRunnerCategoryFilterId(filter.id)}
+                  >
+                    {filter.label}
+                  </button>
+                ))}
+              </div>
+              <ClearTimesButton onCleared={reload} />
             </div>
-            <ClearTimesButton onCleared={reload} />
+            <SearchBar query={query} onChange={setQuery} />
           </div>
-          <SearchBar query={query} onChange={setQuery} />
           <RunnerTable
             runners={filteredRunners}
             emptyMessage={
