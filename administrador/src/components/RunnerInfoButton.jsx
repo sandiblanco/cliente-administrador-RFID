@@ -4,6 +4,10 @@ import { AlertIcon, InfoIcon } from './icons'
 
 const GENDER_LABELS = { M: 'Masculino', F: 'Femenino' }
 
+// Debe calzar con el width del popover en components.css.
+const POPOVER_WIDTH = 220
+const VIEWPORT_MARGIN = 12
+
 // Icono de info por corredor en la tabla — al hacer click abre un
 // desplegable chico con datos del corredor que no se ven en el resto de
 // la fila: género y talla de camiseta (de solo lectura, vienen del
@@ -30,7 +34,26 @@ export default function RunnerInfoButton({ runner, onSave }) {
     }
     const updatePosition = () => {
       const rect = triggerRef.current.getBoundingClientRect()
-      setPosition({ top: rect.bottom + 8, left: rect.left })
+      // La columna de info es la última de la tabla: el botón suele
+      // quedar cerca del borde derecho de la ventana. Si el popover no
+      // entra abierto hacia la derecha (su alineación por defecto), se
+      // "voltea" para abrir hacia la izquierda — misma técnica de
+      // detección de colisión que usan los popovers de Radix/Floating UI.
+      const overflowsRight =
+        rect.left + POPOVER_WIDTH + VIEWPORT_MARGIN > window.innerWidth
+      const left = overflowsRight
+        ? Math.max(VIEWPORT_MARGIN, rect.right - POPOVER_WIDTH)
+        : rect.left
+      setPosition({
+        top: rect.bottom + 8,
+        left,
+        // La flecha sigue apuntando al centro del botón sin importar de
+        // qué lado terminó alineada la caja.
+        caretLeft: Math.min(
+          POPOVER_WIDTH - 20,
+          Math.max(12, rect.left + rect.width / 2 - left)
+        ),
+      })
     }
     updatePosition()
     window.addEventListener('resize', updatePosition)
@@ -101,8 +124,21 @@ export default function RunnerInfoButton({ runner, onSave }) {
           <div
             ref={popoverRef}
             className="info-edit-popover"
-            style={{ top: position.top, left: position.left }}
+            style={{
+              top: position.top,
+              left: position.left,
+              '--caret-left': `${position.caretLeft}px`,
+            }}
           >
+            {/* Encabezado con corredor + nombre: quién está viendo/editando
+                esto no puede depender solo de la cercanía visual al icono
+                que lo abrió — la tabla scrollea y el popover puede
+                reposicionarse cerca del borde de la ventana. */}
+            <p className="info-edit-heading">
+              <span className="info-edit-heading-id">#{runner.id}</span>
+              <span className="info-edit-heading-name">{runner.name}</span>
+            </p>
+
             <dl className="info-edit-readonly">
               <div>
                 <dt>Género</dt>

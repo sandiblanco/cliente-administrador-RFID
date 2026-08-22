@@ -1027,6 +1027,22 @@ tbody tr:has(.badge-pending) td:first-child {
   color: var(--accent-primary);
 }
 
+/* Con el popover abierto: mismo lenguaje que el hover, pero persistente
+   — entre varias filas con el mismo icono, deja claro cuál está activo
+   ahora mismo sin depender solo de dónde apareció el popover. */
+.info-edit-trigger[aria-expanded='true'] {
+  background: var(--surface-sunken);
+  color: var(--accent-primary);
+}
+
+/* La fila entera se resalta mientras su popover de info está abierto —
+   así el vínculo fila↔popover no depende únicamente de la cercanía
+   visual, que se puede perder si la tabla scrollea o el popover se
+   reacomoda cerca del borde de la ventana. */
+tr:has(> td > .info-edit-trigger[aria-expanded='true']) {
+  background: var(--row-hover);
+}
+
 .info-edit-popover {
   position: fixed;
   z-index: 1000;
@@ -1039,6 +1055,56 @@ tbody tr:has(.badge-pending) td:first-child {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+/* Flecha apuntando al icono que abrió el popover — técnica estándar de
+   tooltip/popover para dejar sin ambigüedad de qué elemento "cuelga".
+   z-index negativo: queda debajo del contenido propio del popover pero
+   encima del fondo, así la mitad que cae dentro del padding se funde
+   con --surface sin recortes. */
+.info-edit-popover::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  /* Puesta por RunnerInfoButton según dónde quedó el botón que abrió
+     el popover — sigue apuntando aunque la caja se voltee a la
+     izquierda por falta de espacio a la derecha. */
+  left: var(--caret-left, 10px);
+  width: 12px;
+  height: 12px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  border-radius: 2px 0 0 0;
+  transform: rotate(45deg);
+  z-index: -1;
+}
+
+.info-edit-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+  font-family: var(--font-display);
+}
+
+.info-edit-heading-id {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent-primary);
+}
+
+.info-edit-heading-name {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Género y talla: de solo lectura, vienen del .xlsx de inscripción. */
