@@ -1016,15 +1016,11 @@ tbody tr:has(.badge-pending) td:first-child {
   cursor: pointer;
 }
 
+/* Solo resalta el fondo — el color lo define el semáforo de entregas
+   de abajo, y no debe taparse al pasar el mouse ni al tener el
+   popover abierto. */
 .info-edit-trigger:hover {
   background: var(--surface-sunken);
-  color: var(--accent-primary);
-}
-
-/* Ya tiene algún dato cargado: se distingue de "sin completar" a simple
-   vista, igual que tag-edit-trigger-set. */
-.info-edit-trigger-set {
-  color: var(--accent-primary);
 }
 
 /* Con el popover abierto: mismo lenguaje que el hover, pero persistente
@@ -1032,7 +1028,17 @@ tbody tr:has(.badge-pending) td:first-child {
    ahora mismo sin depender solo de dónde apareció el popover. */
 .info-edit-trigger[aria-expanded='true'] {
   background: var(--surface-sunken);
-  color: var(--accent-primary);
+}
+
+/* Semáforo de entregas, de un vistazo y sin abrir el popover: gris
+   (color base, --text-faint) = nada entregado, ámbar = falta una de
+   las dos, verde = camiseta y paquete entregados. */
+.info-edit-trigger-partial {
+  color: var(--accent-warning);
+}
+
+.info-edit-trigger-complete {
+  color: var(--accent-success-strong);
 }
 
 /* La fila entera se resalta mientras su popover de info está abierto —
@@ -1061,11 +1067,12 @@ tr:has(> td > .info-edit-trigger[aria-expanded='true']) {
    tooltip/popover para dejar sin ambigüedad de qué elemento "cuelga".
    z-index negativo: queda debajo del contenido propio del popover pero
    encima del fondo, así la mitad que cae dentro del padding se funde
-   con --surface sin recortes. */
+   con --surface sin recortes. Un solo cuadrado rotado 45°; qué mitad
+   queda "afuera" (arriba u abajo de la caja) lo decide data-placement,
+   puesto por RunnerInfoButton según de qué lado entró el popover. */
 .info-edit-popover::before {
   content: '';
   position: absolute;
-  top: -6px;
   /* Puesta por RunnerInfoButton según dónde quedó el botón que abrió
      el popover — sigue apuntando aunque la caja se voltee a la
      izquierda por falta de espacio a la derecha. */
@@ -1073,11 +1080,27 @@ tr:has(> td > .info-edit-trigger[aria-expanded='true']) {
   width: 12px;
   height: 12px;
   background: var(--surface);
+  transform: rotate(45deg);
+  z-index: -1;
+}
+
+/* Abre debajo del botón (default): la flecha apunta hacia arriba,
+   pegada al borde superior de la caja. */
+.info-edit-popover[data-placement='bottom']::before {
+  top: -6px;
   border-left: 1px solid var(--border);
   border-top: 1px solid var(--border);
   border-radius: 2px 0 0 0;
-  transform: rotate(45deg);
-  z-index: -1;
+}
+
+/* No entraba abajo (fila cerca del final de una tabla con scroll) y se
+   volteó hacia arriba: la flecha pasa al borde inferior, apuntando
+   hacia abajo, para seguir señalando al botón que quedó debajo. */
+.info-edit-popover[data-placement='top']::before {
+  bottom: -6px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  border-radius: 0 0 2px 0;
 }
 
 .info-edit-heading {

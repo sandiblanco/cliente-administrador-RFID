@@ -4,8 +4,13 @@ import { AlertIcon, InfoIcon } from './icons'
 
 const GENDER_LABELS = { M: 'Masculino', F: 'Femenino' }
 
-// Debe calzar con el width del popover en components.css.
+// Debe calzar con el width del popover en components.css. El alto no
+// tiene un valor fijo en CSS (el contenido lo define), así que acá se
+// usa una estimación holgada — de sobra para el contenido normal más
+// el mensaje de error, que es lo único que varía — para decidir de
+// qué lado abre sin tener que medir el DOM real en dos pasadas.
 const POPOVER_WIDTH = 220
+const POPOVER_HEIGHT_ESTIMATE = 300
 const VIEWPORT_MARGIN = 12
 
 // Icono de info por corredor en la tabla — al hacer click abre un
@@ -34,6 +39,7 @@ export default function RunnerInfoButton({ runner, onSave }) {
     }
     const updatePosition = () => {
       const rect = triggerRef.current.getBoundingClientRect()
+
       // La columna de info es la última de la tabla: el botón suele
       // quedar cerca del borde derecho de la ventana. Si el popover no
       // entra abierto hacia la derecha (su alineación por defecto), se
@@ -41,12 +47,32 @@ export default function RunnerInfoButton({ runner, onSave }) {
       // detección de colisión que usan los popovers de Radix/Floating UI.
       const overflowsRight =
         rect.left + POPOVER_WIDTH + VIEWPORT_MARGIN > window.innerWidth
-      const left = overflowsRight
-        ? Math.max(VIEWPORT_MARGIN, rect.right - POPOVER_WIDTH)
-        : rect.left
+      let left = overflowsRight ? rect.right - POPOVER_WIDTH : rect.left
+      left = Math.min(
+        Math.max(left, VIEWPORT_MARGIN),
+        window.innerWidth - POPOVER_WIDTH - VIEWPORT_MARGIN
+      )
+
+      // Mismo criterio para el eje vertical: por default abre debajo
+      // del botón, pero si no entra (por ejemplo, una fila cerca del
+      // final de una tabla con scroll) y arriba sí entra, se voltea
+      // hacia arriba en vez de cortarse contra el borde de la ventana.
+      const fitsBelow =
+        rect.bottom + 8 + POPOVER_HEIGHT_ESTIMATE + VIEWPORT_MARGIN <=
+        window.innerHeight
+      const fitsAbove =
+        rect.top - 8 - POPOVER_HEIGHT_ESTIMATE >= VIEWPORT_MARGIN
+      const opensUpward = !fitsBelow && fitsAbove
+      let top = opensUpward ? rect.top - 8 - POPOVER_HEIGHT_ESTIMATE : rect.bottom + 8
+      top = Math.min(
+        Math.max(top, VIEWPORT_MARGIN),
+        Math.max(VIEWPORT_MARGIN, window.innerHeight - POPOVER_HEIGHT_ESTIMATE - VIEWPORT_MARGIN)
+      )
+
       setPosition({
-        top: rect.bottom + 8,
+        top,
         left,
+        placement: opensUpward ? 'top' : 'bottom',
         // La flecha sigue apuntando al centro del botón sin importar de
         // qué lado terminó alineada la caja.
         caretLeft: Math.min(
@@ -101,7 +127,16 @@ export default function RunnerInfoButton({ runner, onSave }) {
     }
   }
 
-  const hasData = runner.shirtDelivered || runner.kitDelivered
+  // El icono funciona como semáforo de entregas de un vistazo, sin abrir
+  // el popover: gris si no se entregó nada, amarillo si falta una de las
+  // dos, verde si ya se entregaron ambas.
+  const deliveredCount = (runner.shirtDelivered ? 1 : 0) + (runner.kitDelivered ? 1 : 0)
+  const deliveryClass =
+    deliveredCount === 2
+      ? 'info-edit-trigger-complete'
+      : deliveredCount === 1
+        ? 'info-edit-trigger-partial'
+        : ''
   const genderLabel = GENDER_LABELS[(runner.gender ?? '').toUpperCase()] ?? '—'
 
   return (
@@ -109,12 +144,18 @@ export default function RunnerInfoButton({ runner, onSave }) {
       <button
         ref={triggerRef}
         type="button"
-        className={`info-edit-trigger ${hasData ? 'info-edit-trigger-set' : ''}`}
+        className={`info-edit-trigger ${deliveryClass}`}
         onClick={handleToggle}
         aria-haspopup="true"
         aria-expanded={open}
         aria-label="Ver/editar datos del corredor"
-        title="Género, talla de camiseta y entregas"
+        title={
+          deliveredCount === 2
+            ? 'Camiseta y paquete entregados'
+            : deliveredCount === 1
+              ? 'Falta una entrega'
+              : 'Género, talla de camiseta y entregas'
+        }
       >
         <InfoIcon />
       </button>
@@ -124,6 +165,7 @@ export default function RunnerInfoButton({ runner, onSave }) {
           <div
             ref={popoverRef}
             className="info-edit-popover"
+            data-placement={position.placement}
             style={{
               top: position.top,
               left: position.left,
