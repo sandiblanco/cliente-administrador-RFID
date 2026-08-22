@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import RunnerInput from './components/RunnerInput.jsx'
 import RunnerGrid from './components/RunnerGrid.jsx'
 import ConnectionStatus from './components/ConnectionStatus.jsx'
@@ -31,6 +31,29 @@ export default function App() {
   const [syncProgress, setSyncProgress] = useState(null)
   const [syncing, setSyncing] = useState(false)
   const pendingTimers = useRef({})
+
+  // El input de ID del corredor es lo único con prioridad real en
+  // pantalla: quien opera esto está registrando llegadas contra el
+  // reloj, no leyendo la grilla. Queda pegado justo debajo de la
+  // cabecera (que ya es sticky) — su offset se mide con ResizeObserver
+  // porque el alto de la cabecera varía (el contador "registrados/total"
+  // cambia de ancho, la pantalla puede angostarse, etc.).
+  const chromeRef = useRef(null)
+
+  useLayoutEffect(() => {
+    const chromeEl = chromeRef.current
+    if (!chromeEl) {
+      return
+    }
+    const root = document.documentElement
+    const updateOffset = () => {
+      root.style.setProperty('--chrome-h', `${chromeEl.offsetHeight}px`)
+    }
+    updateOffset()
+    const observer = new ResizeObserver(updateOffset)
+    observer.observe(chromeEl)
+    return () => observer.disconnect()
+  }, [])
 
   function showError(message, type = 'validation') {
     setError({ message, type })
@@ -286,7 +309,7 @@ export default function App() {
 
   return (
     <main className="app">
-      <header className="chrome">
+      <header className="chrome" ref={chromeRef}>
         <div className="chrome-inner">
           <div className="chrome-heading">
             <p className="chrome-eyebrow">Carrera del Informático</p>

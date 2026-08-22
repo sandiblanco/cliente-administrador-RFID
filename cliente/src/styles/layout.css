@@ -86,8 +86,18 @@
   padding: var(--space-5) var(--space-4) var(--space-10);
 }
 
+/* Pegado justo debajo de la cabecera (sticky) — es lo único con
+   prioridad real en pantalla: quien opera esto registra llegadas
+   contra el reloj, la grilla de corredores puede scrollear libre. El
+   offset (--chrome-h) lo mide App.jsx con ResizeObserver, porque el
+   alto de la cabecera varía. */
 .input-section {
-  margin-bottom: var(--space-4);
+  position: sticky;
+  top: var(--chrome-h, 88px);
+  z-index: 9;
+  background: var(--bg);
+  padding-bottom: var(--space-2);
+  margin-bottom: var(--space-2);
 }
 
 .input-section input {
