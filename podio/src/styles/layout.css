@@ -38,6 +38,30 @@
   }
 }
 
+/* Toggle de tema — muy chico y en la esquina, para no competir con la
+   cabecera decorativa que es lo que se proyecta. */
+.theme-toggle-mini {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(22px, 2.6vh, 30px);
+  height: clamp(22px, 2.6vh, 30px);
+  padding: 0;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-faint);
+  cursor: pointer;
+}
+
+.theme-toggle-mini:hover {
+  color: var(--accent-primary);
+  border-color: var(--border-strong);
+}
+
 .header-live {
   display: inline-flex;
   align-items: center;

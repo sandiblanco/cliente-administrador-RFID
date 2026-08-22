@@ -1,9 +1,13 @@
 /* ============================================================
    Podio en tiempo real · Carrera del Informático
-   Pantalla de solo lectura pensada para proyectarse (TV/proyector) —
-   siempre en modo oscuro, sin toggle de tema: es la lectura más fiel
-   del brief de marca (navy profundo, acentos neón, glow) y la que
-   mejor se lee a distancia.
+   Pantalla de solo lectura pensada para proyectarse (TV/proyector).
+   Arranca en modo oscuro —la lectura más fiel del brief de marca
+   (navy profundo, acentos neón, glow) y la que mejor se lee a
+   distancia— pero admite un toggle claro/oscuro chico en la cabecera
+   para pantallas muy luminosas (ver useTheme.js).
+
+   Mecanismo de tema: [data-theme] via useTheme.js, mismo patrón que
+   el administrador — solo se redefinen variables de rol.
    ============================================================ */
 
 @font-face {
@@ -27,7 +31,7 @@
 }
 
 :root {
-  color-scheme: dark;
+  color-scheme: light;
 
   /* -- Marca: misma paleta base que cliente/administrador -- */
   --navy-deep: #061a33;
@@ -40,6 +44,66 @@
   --white-cold: #f4f7fa;
   --gray-blue: #9cb1c7;
 
+  /* -- Roles: tema claro (por defecto arranca oscuro — ver useTheme) -- */
+  --bg: var(--white-cold);
+  --surface: #ffffff;
+  --surface-sunken: #eaf0f6;
+  --border: rgba(156, 177, 199, 0.55);
+  --border-strong: rgba(156, 177, 199, 0.85);
+
+  --text: var(--blue-dark);
+  --text-muted: #4b6580;
+  --text-faint: #7e93ac;
+
+  --accent-primary: var(--blue-electric);
+  --accent-secondary: var(--cyan-tech);
+  --accent-success: var(--turquoise-neon);
+
+  --accent-error: #b3261e;
+  --accent-error-bg: #fbebe9;
+
+  /* -- Medallero: los tres acentos que no existen en cliente/admin -- */
+  --gold: #d69f1e;
+  --gold-strong: #b9860f;
+  --gold-tint: rgba(255, 209, 102, 0.18);
+  --silver: #7c8a99;
+  --silver-strong: #64717f;
+  --silver-tint: rgba(156, 177, 199, 0.16);
+  --bronze: #ad6a35;
+  --bronze-strong: #8f5527;
+  --bronze-tint: rgba(226, 167, 111, 0.18);
+
+  --focus-ring: var(--blue-electric);
+
+  /* Glow: solo tiene sentido sobre fondo oscuro — en claro queda
+     desactivado, igual criterio que el administrador. */
+  --glow-gold: none;
+  --glow-silver: none;
+  --glow-bronze: none;
+  --glow-live: none;
+
+  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  --font-display: 'Chakra Petch', var(--font-body);
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+
+  --shadow-card: 0 1px 2px rgba(10, 37, 71, 0.06), 0 1px 1px rgba(10, 37, 71, 0.04);
+  --shadow-lifted: 0 20px 50px rgba(10, 37, 71, 0.12);
+
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+
+  font-family: var(--font-body);
+}
+
+/* Modo oscuro: fondo navy dominante, acentos neón y glow a pleno — la
+   expresión más fiel del brief de marca, y el default con el que
+   arranca la pantalla (ver useTheme.js). */
+[data-theme='dark'] {
+  color-scheme: dark;
+
   --bg: var(--navy-void);
   --surface: #0d2440;
   --surface-sunken: rgba(6, 26, 51, 0.6);
@@ -50,15 +114,9 @@
   --text-muted: var(--gray-blue);
   --text-faint: #5d7999;
 
-  --accent-primary: var(--blue-electric);
-  --accent-secondary: var(--cyan-tech);
-  --accent-success: var(--turquoise-neon);
-
   --accent-error: #ff6b5d;
   --accent-error-bg: rgba(255, 107, 93, 0.12);
 
-  /* -- Medallero: los tres acentos que no existen en cliente/admin, --
-     -- pensados para leerse desde lejos sin perder el tono navy/neón -- */
   --gold: #ffd166;
   --gold-strong: #ffb84d;
   --gold-tint: rgba(255, 209, 102, 0.14);
@@ -69,16 +127,6 @@
   --bronze-strong: #cb8752;
   --bronze-tint: rgba(226, 167, 111, 0.14);
 
-  --focus-ring: var(--blue-electric);
-
-  --font-body: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial,
-    sans-serif;
-  --font-display: 'Chakra Petch', var(--font-body);
-
-  --radius-sm: 8px;
-  --radius-md: 14px;
-  --radius-lg: 20px;
-
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(0, 0, 0, 0.15);
   --shadow-lifted: 0 20px 60px rgba(0, 0, 0, 0.45);
 
@@ -86,8 +134,4 @@
   --glow-silver: 0 0 0 2px rgba(215, 226, 238, 0.3), 0 0 18px rgba(215, 226, 238, 0.16);
   --glow-bronze: 0 0 0 2px rgba(226, 167, 111, 0.32), 0 0 18px rgba(226, 167, 111, 0.2);
   --glow-live: 0 0 0 3px rgba(91, 227, 165, 0.22), 0 0 16px rgba(91, 227, 165, 0.3);
-
-  --ease: cubic-bezier(0.4, 0, 0.2, 1);
-
-  font-family: var(--font-body);
 }
