@@ -5,6 +5,7 @@ import { formatCategoryLabel } from '../utils/category'
 import EditTimeModal from './EditTimeModal'
 import DeleteTimeConfirm from './DeleteTimeConfirm'
 import TagEditButton from './TagEditButton'
+import RunnerInfoButton from './RunnerInfoButton'
 
 export default function RunnerTable({
   runners,
@@ -12,6 +13,7 @@ export default function RunnerTable({
   onEditTime,
   onDeleteTime,
   onUpdateTag,
+  onUpdateInfo,
   showCategory = false,
   showRank = false,
 }) {
@@ -52,6 +54,7 @@ export default function RunnerTable({
             <th>Tiempo</th>
             <th>Estado</th>
             {onEditTime && <th>Acciones</th>}
+            {onUpdateInfo && <th className="th-info"></th>}
           </tr>
         </thead>
         <tbody>
@@ -105,6 +108,14 @@ export default function RunnerTable({
                       </button>
                     )}
                   </div>
+                </td>
+              )}
+              {onUpdateInfo && (
+                <td className="td-info">
+                  <RunnerInfoButton
+                    runner={runner}
+                    onSave={(info) => onUpdateInfo(runner, info)}
+                  />
                 </td>
               )}
             </tr>

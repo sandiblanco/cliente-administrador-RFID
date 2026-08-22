@@ -138,6 +138,27 @@ export function TagIcon(props) {
   )
 }
 
+export function InfoIcon(props) {
+  return (
+    <svg
+      width="13"
+      height="13"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <circle cx="8" cy="8" r="6.4" />
+      <path d="M8 7.4v4" />
+      <circle cx="8" cy="4.8" r="0.15" fill="currentColor" />
+    </svg>
+  )
+}
+
 export function SearchIcon(props) {
   return (
     <svg

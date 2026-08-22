@@ -57,8 +57,11 @@ export default function App() {
   }
 
   // PUT /runners/{id} espera el Runner completo, no un parche — se
-  // reconstruye a partir de lo que ya tenemos en memoria para esa fila
-  // en vez de pedirlo de nuevo al servidor.
+  // reconstruye a partir de lo que ya tenemos en memoria para esa fila en
+  // vez de pedirlo de nuevo al servidor. shirt_size viaja tal cual está
+  // en memoria (viene del .xlsx, no se edita desde acá — ver
+  // RunnerInfoButton) y lo mismo el resto de campos permanentes que no
+  // se están editando en cada llamada, para no pisarlos.
   const handleUpdateTag = async (runner, tagId) => {
     const res = await updateRunner(runner.id, {
       runner_id: runner.id,
@@ -67,11 +70,36 @@ export default function App() {
       gender: runner.gender,
       category: runner.category,
       subcategory: runner.subcategory,
+      shirt_size: runner.shirtSize,
+      shirt_delivered: runner.shirtDelivered,
+      kit_delivered: runner.kitDelivered,
     })
     if (res.status !== 'ok') {
       throw new Error(res.message || 'No se pudo actualizar el tag')
     }
     applyUpdate({ id: runner.id, tagId })
+  }
+
+  // Misma lógica que handleUpdateTag pero para los checks permanentes
+  // del popover de info (entrega de camiseta y de paquete de corredor)
+  // — persisten por runner_id igual que el tag. shirt_size no se toca:
+  // viene del .xlsx y no es editable desde este popover.
+  const handleUpdateInfo = async (runner, info) => {
+    const res = await updateRunner(runner.id, {
+      runner_id: runner.id,
+      tag_id: runner.tagId,
+      name: runner.name,
+      gender: runner.gender,
+      category: runner.category,
+      subcategory: runner.subcategory,
+      shirt_size: runner.shirtSize,
+      shirt_delivered: info.shirtDelivered,
+      kit_delivered: info.kitDelivered,
+    })
+    if (res.status !== 'ok') {
+      throw new Error(res.message || 'No se pudo actualizar la información del corredor')
+    }
+    applyUpdate({ id: runner.id, ...info })
   }
 
   const runnerCategoryFilter =
@@ -163,6 +191,7 @@ export default function App() {
             onEditTime={handleEditTime}
             onDeleteTime={handleDeleteTime}
             onUpdateTag={handleUpdateTag}
+            onUpdateInfo={handleUpdateInfo}
             showCategory
           />
         </section>

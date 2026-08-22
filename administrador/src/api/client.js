@@ -25,6 +25,9 @@ function mapRunner(runner, timestamp, elapsedSeconds) {
     category: runner.category,
     subcategory: runner.subcategory,
     gender: runner.gender,
+    shirtSize: runner.shirt_size ?? null,
+    shirtDelivered: runner.shirt_delivered ?? false,
+    kitDelivered: runner.kit_delivered ?? false,
   }
 }
 

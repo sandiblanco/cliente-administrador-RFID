@@ -991,3 +991,103 @@ tbody tr:has(.badge-pending) td:first-child {
   width: 100%;
   margin-top: 12px;
 }
+
+/* ---------- Info permanente por corredor (icono + desplegable) ---------- */
+
+/* Columna angosta y sin título — solo aloja el icono de info al final
+   de cada fila. */
+.th-info,
+.td-info {
+  width: 32px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+.info-edit-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--text-faint);
+  cursor: pointer;
+}
+
+.info-edit-trigger:hover {
+  background: var(--surface-sunken);
+  color: var(--accent-primary);
+}
+
+/* Ya tiene algún dato cargado: se distingue de "sin completar" a simple
+   vista, igual que tag-edit-trigger-set. */
+.info-edit-trigger-set {
+  color: var(--accent-primary);
+}
+
+.info-edit-popover {
+  position: fixed;
+  z-index: 1000;
+  width: 220px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-chrome);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Género y talla: de solo lectura, vienen del .xlsx de inscripción. */
+.info-edit-readonly {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 10px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-sunken);
+}
+
+.info-edit-readonly > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.info-edit-readonly dt {
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.info-edit-readonly dd {
+  margin: 0;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.info-edit-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.info-edit-error {
+  padding: 8px 10px;
+  margin: 0;
+  font-size: 0.76rem;
+}
+
+.info-edit-save {
+  width: 100%;
+}
