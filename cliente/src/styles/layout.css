@@ -83,19 +83,29 @@
 .app-main {
   max-width: 720px;
   margin: 0 auto;
-  padding: var(--space-5) var(--space-4) var(--space-10);
+  padding: 0 var(--space-4) var(--space-10);
 }
 
 /* Pegado justo debajo de la cabecera (sticky) — es lo único con
    prioridad real en pantalla: quien opera esto registra llegadas
    contra el reloj, la grilla de corredores puede scrollear libre. El
    offset (--chrome-h) lo mide App.jsx con ResizeObserver, porque el
-   alto de la cabecera varía. */
+   alto de la cabecera varía.
+
+   El espacio respecto a la cabecera vive en el padding-top de ESTE
+   elemento (no en el padding-top de .app-main, que era donde estaba
+   antes): un padding del contenedor padre se scrollea junto con todo
+   lo de arriba, así que en el momento justo en que el input queda
+   "pegado" ese aire desaparecía de golpe — se sentía como que el
+   input se pegaba contra la cabecera apenas arrancaba el scroll. Al
+   ser padding del propio elemento sticky, se mantiene siempre,
+   scrolleado o no. */
 .input-section {
   position: sticky;
   top: var(--chrome-h, 88px);
   z-index: 9;
   background: var(--bg);
+  padding-top: var(--space-5);
   padding-bottom: var(--space-2);
   margin-bottom: var(--space-2);
 }
