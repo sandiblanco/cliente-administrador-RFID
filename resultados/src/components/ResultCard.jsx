@@ -12,7 +12,7 @@ const GENDER_LABELS = { M: 'Hombres', F: 'Mujeres' }
 // - "de categoría" (rank_group/group_total_group): dentro de su grupo
 //   subcategoría × género. Solo existe en 10K -- el 5K es recreativo y
 //   no tiene subcategorías (ver category.js del podio).
-export default function ResultCard({ result }) {
+export default function ResultCard({ result, onLocateInLeaderboard }) {
   const genderLabel = GENDER_LABELS[result.gender] ?? result.gender ?? '—'
 
   return (
@@ -58,6 +58,12 @@ export default function ResultCard({ result }) {
                 <span className="result-stat-value">de {result.group_total_group}</span>
               </div>
             </div>
+          )}
+
+          {onLocateInLeaderboard && (
+            <button type="button" className="result-locate-btn" onClick={onLocateInLeaderboard}>
+              Ver en la tabla completa ↓
+            </button>
           )}
         </div>
       )}
