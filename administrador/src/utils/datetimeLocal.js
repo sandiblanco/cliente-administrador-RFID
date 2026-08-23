@@ -1,25 +1,33 @@
 // Conversión entre el timestamp "naive" (sin zona horaria) que usa el
-// servidor y el formato que espera un <input type="datetime-local">.
+// servidor y los campos fecha/hora/segundos que usa la UI.
 //
 // El sistema guarda los timestamps tal cual, sin conversión de zona
 // horaria, así que acá se evita cualquier paso por Date/toISOString que
 // introduciría 'Z' y corriera la hora.
+//
+// Los segundos se editan con un input numérico propio en vez de confiar
+// en el selector nativo de <input type="datetime-local">: en iOS/iPadOS
+// (Safari) ese picker no muestra una rueda de segundos aunque se use
+// step="1" — limitación conocida de WebKit —, así que con eso solo se
+// podía ajustar minutos desde el celular/tablet.
 
-export function toDatetimeLocalValue(timestamp) {
+export function splitTimestampParts(timestamp) {
   if (!timestamp) {
-    return ''
+    return { date: '', time: '', seconds: '' }
   }
-  // "2026-08-10T14:23:00.123000" -> "2026-08-10T14:23:00"
-  return timestamp.slice(0, 19)
+  // "2026-08-10T14:23:05.123000" -> date="2026-08-10" time="14:23" seconds="05"
+  const [datePart = '', timePart = ''] = timestamp.slice(0, 19).split('T')
+  const [hh = '', mm = '', ss = ''] = timePart.split(':')
+  return { date: datePart, time: hh && mm ? `${hh}:${mm}` : '', seconds: ss }
 }
 
-export function fromDatetimeLocalValue(value) {
-  if (!value) {
+export function combineTimestampParts(date, time, seconds) {
+  if (!date || !time) {
     return null
   }
-  // El input con step="1" entrega segundos, pero por las dudas se completan
-  // si el navegador los omite.
-  return value.length === 16 ? `${value}:00` : value
+  const ss = String(seconds ?? '').trim()
+  const paddedSeconds = ss === '' ? '00' : ss.padStart(2, '0')
+  return `${date}T${time}:${paddedSeconds}`
 }
 
 // Hora actual del navegador como timestamp "naive", en el mismo formato

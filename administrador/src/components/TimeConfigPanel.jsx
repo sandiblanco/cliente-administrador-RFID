@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react'
 import { getRaceConfig, setRaceStartTime } from '../api/client'
-import { fromDatetimeLocalValue, nowAsNaiveTimestamp } from '../utils/datetimeLocal'
+import { combineTimestampParts, nowAsNaiveTimestamp } from '../utils/datetimeLocal'
 import { AlertIcon } from './icons'
 import ClearTimesButton from './ClearTimesButton'
+import DateTimeSecondsField from './DateTimeSecondsField'
 
 // Una fila por categoría: botón "Iniciar tiempos" (fija el inicio al
 // momento del click) + campo manual (fija un inicio elegido a mano).
 // Ambos pasan por el mismo endpoint (/race-config) y solo tocan la hora
 // de inicio de esa categoría — nunca los tiempos finales ya registrados.
 function CategoryStartRow({ category, accentClass, currentStartTime, onSaved }) {
-  const [manualValue, setManualValue] = useState('')
+  const [manualParts, setManualParts] = useState({ date: '', time: '', seconds: '' })
   const [starting, setStarting] = useState(false)
   const [savingManual, setSavingManual] = useState(false)
   const [error, setError] = useState(null)
@@ -32,7 +33,7 @@ function CategoryStartRow({ category, accentClass, currentStartTime, onSaved }) 
 
   const handleManualSubmit = async (event) => {
     event.preventDefault()
-    const timestamp = fromDatetimeLocalValue(manualValue)
+    const timestamp = combineTimestampParts(manualParts.date, manualParts.time, manualParts.seconds)
     if (!timestamp) {
       setError('Ingresá una fecha y hora válidas')
       return
@@ -73,16 +74,14 @@ function CategoryStartRow({ category, accentClass, currentStartTime, onSaved }) 
       </button>
 
       <form className="time-config-manual" onSubmit={handleManualSubmit}>
-        <label className="modal-field">
-          Inicio manual {category}
-          <input
-            type="datetime-local"
-            step="1"
-            value={manualValue}
-            onChange={(event) => setManualValue(event.target.value)}
-            required
-          />
-        </label>
+        <DateTimeSecondsField
+          label={`Inicio manual ${category}`}
+          date={manualParts.date}
+          time={manualParts.time}
+          seconds={manualParts.seconds}
+          onChange={setManualParts}
+          required
+        />
         <button type="submit" className="btn-secondary" disabled={savingManual}>
           {savingManual ? 'Guardando…' : 'Guardar hora manual'}
         </button>

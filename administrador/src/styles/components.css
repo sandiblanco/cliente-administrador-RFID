@@ -754,6 +754,39 @@ tbody tr:has(.badge-pending) td:first-child {
   box-shadow: var(--glow-primary);
 }
 
+.datetime-seconds-row {
+  display: flex;
+  gap: 8px;
+}
+
+.datetime-seconds-row input[type='date'] {
+  flex: 2;
+  min-width: 0;
+}
+
+.datetime-seconds-row input[type='time'] {
+  flex: 1.5;
+  min-width: 0;
+}
+
+.datetime-seconds-input {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+/* Oculta las flechitas del input numérico de segundos: en un campo de
+   3 dígitos no aportan y achican el área tocable en celular/tablet. */
+.datetime-seconds-input::-webkit-outer-spin-button,
+.datetime-seconds-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.datetime-seconds-input {
+  -moz-appearance: textfield;
+}
+
 .modal-error {
   padding: 10px 12px;
   margin: 14px 0 0;

@@ -1,16 +1,17 @@
 import { useState } from 'react'
-import { fromDatetimeLocalValue, toDatetimeLocalValue } from '../utils/datetimeLocal'
+import { combineTimestampParts, splitTimestampParts } from '../utils/datetimeLocal'
+import DateTimeSecondsField from './DateTimeSecondsField'
 import { AlertIcon } from './icons'
 
 export default function EditTimeModal({ runner, onSave, onClose }) {
-  const [value, setValue] = useState(toDatetimeLocalValue(runner.timestamp))
+  const [parts, setParts] = useState(splitTimestampParts(runner.timestamp))
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const isNew = !runner.timestamp
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    const timestamp = fromDatetimeLocalValue(value)
+    const timestamp = combineTimestampParts(parts.date, parts.time, parts.seconds)
     if (!timestamp) {
       setError('Ingresá una fecha y hora válidas')
       return
@@ -43,16 +44,14 @@ export default function EditTimeModal({ runner, onSave, onClose }) {
         </p>
 
         <form onSubmit={handleSubmit}>
-          <label className="modal-field">
-            Hora de llegada
-            <input
-              type="datetime-local"
-              step="1"
-              value={value}
-              onChange={(event) => setValue(event.target.value)}
-              required
-            />
-          </label>
+          <DateTimeSecondsField
+            label="Hora de llegada"
+            date={parts.date}
+            time={parts.time}
+            seconds={parts.seconds}
+            onChange={setParts}
+            required
+          />
 
           {error && (
             <p className="error modal-error">
