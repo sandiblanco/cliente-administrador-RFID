@@ -256,19 +256,25 @@ export default function App() {
                     </button>
                   ))}
                 </div>
-                <select
-                  className="filter-select"
-                  aria-label="Grupo del 10K"
-                  disabled={runnerCategoryFilterId !== '10k'}
-                  value={groupFilterId}
-                  onChange={(event) => setGroupFilterId(event.target.value)}
-                >
-                  {GROUP_FILTERS.map((filter) => (
-                    <option key={filter.id} value={filter.id}>
-                      {filter.label}
-                    </option>
-                  ))}
-                </select>
+                {/* Solo existe con 10K activo — antes quedaba siempre
+                    visible pero deshabilitado fuera de 10K, y eso leía
+                    como roto (un control gris que no responde) en vez de
+                    "no aplica todavía". Mostrarlo solo cuando corresponde
+                    es más claro que dejarlo ahí sin poder tocarlo. */}
+                {runnerCategoryFilterId === '10k' && (
+                  <select
+                    className="filter-select"
+                    aria-label="Grupo del 10K"
+                    value={groupFilterId}
+                    onChange={(event) => setGroupFilterId(event.target.value)}
+                  >
+                    {GROUP_FILTERS.map((filter) => (
+                      <option key={filter.id} value={filter.id}>
+                        {filter.label}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </div>
               <ClearTimesButton onCleared={reload} />
             </div>

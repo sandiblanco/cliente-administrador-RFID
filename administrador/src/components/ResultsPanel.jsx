@@ -51,19 +51,23 @@ export default function ResultsPanel({ runners, onEditTime, onDeleteTime }) {
               </button>
             ))}
           </div>
-          <select
-            className="filter-select"
-            aria-label="Grupo del 10K"
-            disabled={activeFilterId !== '10k'}
-            value={groupFilterId}
-            onChange={(event) => setGroupFilterId(event.target.value)}
-          >
-            {GROUP_FILTERS.map((filter) => (
-              <option key={filter.id} value={filter.id}>
-                {filter.label}
-              </option>
-            ))}
-          </select>
+          {/* Solo existe con 10K activo — ver mismo criterio en App.jsx:
+              dejarlo visible pero deshabilitado fuera de 10K leía como
+              roto en vez de "no aplica todavía". */}
+          {activeFilterId === '10k' && (
+            <select
+              className="filter-select"
+              aria-label="Grupo del 10K"
+              value={groupFilterId}
+              onChange={(event) => setGroupFilterId(event.target.value)}
+            >
+              {GROUP_FILTERS.map((filter) => (
+                <option key={filter.id} value={filter.id}>
+                  {filter.label}
+                </option>
+              ))}
+            </select>
+          )}
         </div>
       </div>
 
