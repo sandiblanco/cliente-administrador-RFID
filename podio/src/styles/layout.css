@@ -118,11 +118,16 @@
   font-size: 0.85rem;
 }
 
+/* 8 tarjetas (antes 6: veterano/mayor/master × género — ahora suma
+   master_b, ver SUBCATEGORIES en utils/category.js). 4×2 en pantalla
+   ancha, 2×4 en media, 1×8 apiladas en angosta — mismo criterio de
+   antes (múltiplos exactos del total, sin celdas vacías), solo con más
+   filas/columnas. */
 .podium-grid {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   grid-template-rows: repeat(2, 1fr);
   gap: clamp(8px, 1.6vh, 26px);
   flex: 1;
@@ -132,7 +137,7 @@
 @media (max-width: 1080px) {
   .podium-grid {
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-rows: repeat(4, 1fr);
   }
 }
 
@@ -149,20 +154,26 @@
 
   .podium-grid {
     grid-template-columns: 1fr;
-    grid-template-rows: repeat(6, auto);
+    grid-template-rows: repeat(8, auto);
   }
 }
 
-/* Ventanas muy bajas (celular en horizontal, o cualquier ventana chica
-   en un monitor de escritorio) rompían el podio: las filas del grid
-   son `1fr` y `.podium-card` usa container-type:size para escalar por
-   cqh, pero si esa fracción de alto termina siendo menor que el
-   contenido, size containment la trata como intrínsecamente 0 en vez
-   de desbordar — la tarjeta, la lista y los nombres colapsan a 0px y
-   desaparecen (no se truncan: se pierden del todo). Igual que en el
-   breakpoint de ancho angosto, la salida es dejar de forzar todo
-   dentro de 100vh y permitir que la página scrollee. */
-@media (max-height: 480px) {
+/* Ventanas muy bajas (celular en horizontal, una notebook con la
+   ventana no maximizada, o cualquier ventana chica en un monitor de
+   escritorio) rompían el podio: las filas del grid son `1fr` y
+   `.podium-card` usa container-type:size para escalar por cqh, pero si
+   esa fracción de alto termina siendo menor que el contenido, size
+   containment la trata como intrínsecamente 0 en vez de desbordar —
+   la tarjeta, la lista y los nombres colapsan a 0px y desaparecen (no
+   se truncan: se pierden del todo). Igual que en el breakpoint de
+   ancho angosto, la salida es dejar de forzar todo dentro de 100vh y
+   permitir que la página scrollee.
+   El umbral (antes 480px) se subió a 760px tras ver, con las 8
+   tarjetas actuales, que una ventana de ~520px de alto (una notebook
+   con la ventana de Chrome no maximizada, no solo un celular
+   acostado) ya alcanzaba a romper el podio — 480px se quedaba corto
+   para el caso real, no solo el extremo. */
+@media (max-height: 760px) {
   body {
     overflow-y: auto;
   }

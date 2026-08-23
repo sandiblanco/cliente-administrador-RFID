@@ -31,7 +31,9 @@ export default function App() {
 
         <p className="header-eyebrow">Carrera del Informático</p>
         <h1 className="header-title">Podio</h1>
-        <p className="header-sub">10K · Veterano / Mayor / Master · Hombres / Mujeres</p>
+        <p className="header-sub">
+          10K · Veterano / Mayor / Master / Máster B · Hombres / Mujeres
+        </p>
       </header>
 
       {error && (

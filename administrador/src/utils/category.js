@@ -1,11 +1,17 @@
 // Convenciones de la carrera:
 // - category: "5K" (recreativo, sin podio) o "10K" (competitivo, con podio).
-// - subcategory (solo aplica al 10K): veterano, mayor, master.
+// - subcategory (solo aplica al 10K): veterano, mayor, master, master_b.
 // - gender: "M" o "F".
 //
-// Se premian los primeros puestos de las 6 combinaciones de
+// Se premian los primeros puestos de las 8 combinaciones de
 // subcategoría × género dentro del 10K. (Informático se eliminó como
 // subcategoría premiada — ya no se necesita.)
+//
+// master_b (61+) es un desglose de master (51+): nadie la elige en el
+// formulario de inscripción — el backend la deriva por fecha de
+// nacimiento al importar el .xlsx (ver MASTER_B_MIN_AGE en
+// parse_runners_xlsx, server/main.py). Acá solo hace falta darle
+// etiqueta para que salga en el podio y en los filtros.
 
 const GENDERS = [
   { value: 'M', label: 'Hombres' },
@@ -16,6 +22,7 @@ const SUBCATEGORIES = [
   { value: 'veterano', label: 'Veterano' },
   { value: 'mayor', label: 'Mayor' },
   { value: 'master', label: 'Master' },
+  { value: 'master_b', label: 'Máster B' },
 ]
 
 export const normalize = (value) => (value ?? '').toString().trim().toLowerCase()
@@ -41,7 +48,7 @@ export function formatCategoryLabel(runner) {
   return parts.length ? `${category} · ${parts.join(' ')}` : category
 }
 
-// Las 6 modalidades premiadas: subcategoría × género, dentro del 10K.
+// Las 8 modalidades premiadas: subcategoría × género, dentro del 10K.
 export const PODIUM_GROUPS = SUBCATEGORIES.flatMap((subcategory) =>
   GENDERS.map((gender) => ({
     id: `10k-${subcategory.value}-${gender.value}`,

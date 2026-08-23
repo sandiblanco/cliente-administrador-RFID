@@ -184,8 +184,14 @@
    Se pasa a inline-size (solo ancho, sigue sirviendo para el
    @container de arriba y para escalar con cqw) y se le da un piso de
    alto para que nunca se aplaste; el resto de las medidas que usaban
-   cqh se fijan a algo que no depende del contenedor. */
-@media (max-width: 640px), (max-height: 480px) {
+   cqh se fijan a algo que no depende del contenedor.
+   El umbral de alto (max-height) tiene que calzar siempre con el que
+   dispara el fallback de scroll en layout.css — si quedan
+   desincronizados, hay un rango de alturas donde el grid ya pasó a
+   filas auto pero la tarjeta todavía asume container-type:size y
+   colapsa a 0 igual (pasó exactamente eso al subir ese umbral a 760px
+   sin actualizar este). */
+@media (max-width: 640px), (max-height: 760px) {
   .podium-card {
     container-type: inline-size;
     min-height: 230px;
