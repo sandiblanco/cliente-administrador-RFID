@@ -1,0 +1,39 @@
+name: Deploy Cliente a Azure
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - "cliente/**"
+      - ".github/workflows/deploy-cliente.yml"
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar dependencias
+        working-directory: cliente
+        run: npm ci
+
+      - name: Build
+        working-directory: cliente
+        env:
+          VITE_API_URL: ${{ vars.BACKEND_URL }}
+          VITE_SOCKET_URL: ${{ vars.SOCKET_URL }}
+        run: npm run build
+
+      - name: Deploy a Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_SWA_TOKEN_CLIENTE }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: cliente/dist
+          skip_app_build: true
