@@ -156,3 +156,129 @@
   font-size: 0.98rem;
   color: var(--text);
 }
+
+.result-locate-btn {
+  align-self: flex-start;
+  padding: 8px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--accent-primary);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+.result-locate-btn:hover {
+  background: rgba(0, 143, 245, 0.08);
+}
+
+/* -- Tabla de resultados pública (filtros + listado) -- */
+.leaderboard {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  scroll-margin-top: 20px;
+}
+
+.leaderboard-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-group {
+  display: flex;
+  gap: 6px;
+}
+
+.filter-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.15s var(--ease), color 0.15s var(--ease),
+    border-color 0.15s var(--ease);
+}
+
+.filter-btn-active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: var(--white-cold);
+}
+
+.filter-select {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+}
+
+.leaderboard-table {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.leaderboard-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.leaderboard-row-highlight {
+  background: var(--accent-success);
+  background: color-mix(in srgb, var(--accent-success) 16%, var(--surface));
+  border-color: var(--accent-success);
+}
+
+.leaderboard-rank {
+  min-width: 28px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-faint);
+}
+
+.leaderboard-row-highlight .leaderboard-rank {
+  color: var(--accent-success);
+}
+
+.leaderboard-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.92rem;
+  color: var(--text);
+}
+
+.leaderboard-bib {
+  color: var(--text-faint);
+  font-size: 0.78rem;
+}
+
+.leaderboard-time {
+  flex-shrink: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: var(--text);
+}
