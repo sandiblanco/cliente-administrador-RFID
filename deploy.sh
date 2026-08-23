@@ -12,6 +12,16 @@ SSH_USER=marcos
 REMOTE_DIR=/volume1/docker/cliente_administrador_rfid
 BRANCH=dev
 
+# Contraseña SSH: si hay un .env junto a este script (no versionado —
+# ver .gitignore) con SSH_PASS=..., se usa esa en vez de pedirla cada
+# vez. Si no está, sigue preguntando como antes.
+if [ -f "$(dirname "$0")/.env" ]; then
+  set -a
+  # shellcheck disable=SC1091
+  source "$(dirname "$0")/.env"
+  set +a
+fi
+
 # Comprueba si un host:puerto acepta conexiones TCP en un plazo corto.
 host_reachable() {
   local host="$1"
@@ -30,8 +40,10 @@ else
   exit 1
 fi
 
-read -rsp "Contraseña SSH de ${SSH_USER}@${SSH_HOST}: " SSH_PASS
-echo
+if [ -z "${SSH_PASS:-}" ]; then
+  read -rsp "Contraseña SSH de ${SSH_USER}@${SSH_HOST}: " SSH_PASS
+  echo
+fi
 
 ssh_cmd() {
   sshpass -p "$SSH_PASS" ssh -p "$SSH_PORT" -o StrictHostKeyChecking=accept-new \

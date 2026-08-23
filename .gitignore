@@ -2,3 +2,6 @@
 # frontend a un backend local/Tailscale en vez del servidor de producción).
 # No debe compartirse: cada quien apunta sus propias pruebas a su propia IP.
 docker-compose.override.yml
+
+# Contraseña SSH para deploy.sh — nunca se sube, cada quien tiene la suya.
+.env
