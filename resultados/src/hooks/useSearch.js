@@ -15,7 +15,18 @@ export function useSearch() {
 
   useEffect(() => {
     const trimmed = query.trim()
-    if (trimmed.length < MIN_QUERY_LENGTH) {
+    // El mínimo de caracteres es para no lanzar una búsqueda por nombre
+    // con una sola letra -- no aplica a dorsales (solo dígitos), donde
+    // un dorsal de un solo dígito ("1", "2", ...) es válido (ver mismo
+    // criterio en public_search, main.py).
+    const isBib = /^\d+$/.test(trimmed)
+    if (!isBib && trimmed.length < MIN_QUERY_LENGTH) {
+      setStatus('idle')
+      setResults([])
+      setError(null)
+      return
+    }
+    if (trimmed.length === 0) {
       setStatus('idle')
       setResults([])
       setError(null)
