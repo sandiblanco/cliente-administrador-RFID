@@ -159,6 +159,24 @@ export function InfoIcon(props) {
   )
 }
 
+export function PlusIcon(props) {
+  return (
+    <svg
+      width="11"
+      height="11"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M8 2.5v11M2.5 8h11" />
+    </svg>
+  )
+}
+
 export function SearchIcon(props) {
   return (
     <svg

@@ -28,6 +28,7 @@ function mapRunner(runner, timestamp, elapsedSeconds) {
     shirtSize: runner.shirt_size ?? null,
     shirtDelivered: runner.shirt_delivered ?? false,
     kitDelivered: runner.kit_delivered ?? false,
+    specialNote: runner.special_note ?? null,
   }
 }
 

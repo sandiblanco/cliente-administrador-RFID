@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { AlertIcon, InfoIcon } from './icons'
+import { AlertIcon, InfoIcon, PlusIcon } from './icons'
 
 const GENDER_LABELS = { M: 'Masculino', F: 'Femenino' }
 
@@ -10,23 +10,31 @@ const GENDER_LABELS = { M: 'Masculino', F: 'Femenino' }
 // el mensaje de error, que es lo único que varía — para decidir de
 // qué lado abre sin tener que medir el DOM real en dos pasadas.
 const POPOVER_WIDTH = 220
-const POPOVER_HEIGHT_ESTIMATE = 300
+// Un poco más alto que antes para dejar lugar al textarea de la nota
+// especial, que puede quedar abierto — ver bloque "+ nota" más abajo.
+const POPOVER_HEIGHT_ESTIMATE = 360
 const VIEWPORT_MARGIN = 12
 
 // Icono de info por corredor en la tabla — al hacer click abre un
 // desplegable chico con datos del corredor que no se ven en el resto de
 // la fila: género y talla de camiseta (de solo lectura, vienen del
-// .xlsx de inscripción — ver parse_runners_xlsx) y dos checks
-// editables, permanentes, que sí sobreviven a un reemplazo por .xlsx
-// (ver replace_runners_bulk_from_file en el backend, igual mecanismo
-// que tag_id): si ya se entregó la camiseta y el paquete de corredor.
-// Mismo mecanismo de portal + posicionamiento fijo que TagEditButton,
-// por la misma razón (la tabla vive en .table-wrapper con overflow-x:
-// auto).
+// .xlsx de inscripción — ver parse_runners_xlsx), dos checks editables
+// permanentes (si ya se entregó la camiseta y el paquete de corredor) y
+// una nota especial de texto libre, también permanente — los tres
+// sobreviven a un reemplazo por .xlsx (ver
+// replace_runners_bulk_from_file en el backend, igual mecanismo que
+// tag_id). Mismo mecanismo de portal + posicionamiento fijo que
+// TagEditButton, por la misma razón (la tabla vive en .table-wrapper
+// con overflow-x: auto).
 export default function RunnerInfoButton({ runner, onSave }) {
   const [open, setOpen] = useState(false)
   const [shirtDelivered, setShirtDelivered] = useState(!!runner.shirtDelivered)
   const [kitDelivered, setKitDelivered] = useState(!!runner.kitDelivered)
+  const [specialNote, setSpecialNote] = useState(runner.specialNote ?? '')
+  // El textarea de la nota arranca oculto salvo que ya haya una nota
+  // guardada — así el popover no se ve más largo de lo necesario para
+  // el caso común (sin nota), y el "+" es lo que la revela a pedido.
+  const [noteOpen, setNoteOpen] = useState(!!runner.specialNote)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState(null)
   const [position, setPosition] = useState(null)
@@ -110,6 +118,8 @@ export default function RunnerInfoButton({ runner, onSave }) {
   const handleToggle = () => {
     setShirtDelivered(!!runner.shirtDelivered)
     setKitDelivered(!!runner.kitDelivered)
+    setSpecialNote(runner.specialNote ?? '')
+    setNoteOpen(!!runner.specialNote)
     setError(null)
     setOpen((o) => !o)
   }
@@ -118,7 +128,12 @@ export default function RunnerInfoButton({ runner, onSave }) {
     setSaving(true)
     setError(null)
     try {
-      await onSave({ shirtDelivered, kitDelivered })
+      // Nota vacía (o nunca abierta) se guarda como null, no como
+      // string vacío — así el filtro "con anotación especial" y el
+      // indicador del botón (ver hasNote más abajo) no la cuentan como
+      // presente.
+      const trimmedNote = specialNote.trim()
+      await onSave({ shirtDelivered, kitDelivered, specialNote: trimmedNote || null })
       setOpen(false)
     } catch (err) {
       setError(err.message)
@@ -138,23 +153,25 @@ export default function RunnerInfoButton({ runner, onSave }) {
         ? 'info-edit-trigger-partial'
         : ''
   const genderLabel = GENDER_LABELS[(runner.gender ?? '').toUpperCase()] ?? '—'
+  const hasNote = !!runner.specialNote
 
   return (
     <>
       <button
         ref={triggerRef}
         type="button"
-        className={`info-edit-trigger ${deliveryClass}`}
+        className={`info-edit-trigger ${deliveryClass} ${hasNote ? 'info-edit-trigger-has-note' : ''}`}
         onClick={handleToggle}
         aria-haspopup="true"
         aria-expanded={open}
         aria-label="Ver/editar datos del corredor"
         title={
-          deliveredCount === 2
+          (deliveredCount === 2
             ? 'Camiseta y paquete entregados'
             : deliveredCount === 1
               ? 'Falta una entrega'
-              : 'Género, talla de camiseta y entregas'
+              : 'Género, talla de camiseta y entregas') +
+          (hasNote ? ' · Tiene nota especial' : '')
         }
       >
         <InfoIcon />
@@ -209,6 +226,35 @@ export default function RunnerInfoButton({ runner, onSave }) {
               />
               Paquete de corredor entregado
             </label>
+
+            <div className="info-edit-note">
+              {noteOpen ? (
+                <>
+                  <label className="info-edit-note-label" htmlFor={`note-${runner.id}`}>
+                    Nota especial
+                  </label>
+                  <textarea
+                    id={`note-${runner.id}`}
+                    className="info-edit-note-input"
+                    rows={2}
+                    value={specialNote}
+                    onChange={(event) => setSpecialNote(event.target.value)}
+                    placeholder="Alergia, silla de ruedas, guía personal…"
+                    autoFocus={!runner.specialNote}
+                  />
+                </>
+              ) : (
+                <button
+                  type="button"
+                  className="info-edit-note-add"
+                  onClick={() => setNoteOpen(true)}
+                  title="Agregar nota especial"
+                >
+                  <PlusIcon />
+                  Nota especial
+                </button>
+              )}
+            </div>
 
             {error && (
               <p className="error info-edit-error">

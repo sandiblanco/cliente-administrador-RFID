@@ -452,6 +452,31 @@
   box-shadow: var(--glow-primary);
 }
 
+/* Puntito de color en los botones del filtro de "Entregas" — mismo
+   semáforo (gris/ámbar/verde) que el ícono de info por corredor, ver
+   deliveryClass en RunnerInfoButton y DELIVERY_FILTERS en
+   utils/delivery.js. */
+.filter-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.filter-dot-gray {
+  background: var(--text-faint);
+}
+
+.filter-dot-warning {
+  background: var(--accent-warning);
+}
+
+.filter-dot-success {
+  background: var(--accent-success-strong);
+}
+
 /* ---------- Tabla de corredores / resultados ---------- */
 
 .table-wrapper {
@@ -1182,6 +1207,74 @@ tr:has(> td > .info-edit-trigger[aria-expanded='true']) {
   font-weight: 500;
   color: var(--text);
   cursor: pointer;
+}
+
+/* Nota especial de texto libre, revelada por el "+" — ver noteOpen en
+   RunnerInfoButton. Antes de abrirse es solo el botón "+"; una vez
+   abierto (o si ya había una nota guardada) es el textarea. */
+.info-edit-note-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  width: 100%;
+}
+
+.info-edit-note-add:hover {
+  border-color: var(--accent-primary);
+  color: var(--text);
+}
+
+.info-edit-note-label {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.info-edit-note-input {
+  width: 100%;
+  resize: vertical;
+  background: var(--surface-sunken);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 6px 8px;
+  font-size: 0.82rem;
+  font-family: inherit;
+}
+
+.info-edit-note-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: var(--glow-primary);
+}
+
+/* Punto que marca, sin abrir el popover, que el corredor tiene una nota
+   especial guardada — mismo lenguaje visual que el semáforo de
+   entregas pero en una esquina, porque son dos señales independientes
+   (pueden darse juntas o por separado). */
+.info-edit-trigger-has-note {
+  position: relative;
+}
+
+.info-edit-trigger-has-note::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-primary);
 }
 
 .info-edit-error {

@@ -15,6 +15,7 @@ import UploadRunnersPage from './components/UploadRunnersPage'
 import { AlertIcon, MoonIcon, ReloadIcon, SunIcon } from './components/icons'
 import { filterRunners } from './utils/search'
 import { RUNNER_CATEGORY_FILTERS } from './utils/category'
+import { DELIVERY_FILTERS } from './utils/delivery'
 
 const TABS = [
   { id: 'dashboard', label: 'Dashboard' },
@@ -32,6 +33,12 @@ export default function App() {
   const [runnerCategoryFilterId, setRunnerCategoryFilterId] = useState(
     RUNNER_CATEGORY_FILTERS[0].id
   )
+  const [deliveryFilterId, setDeliveryFilterId] = useState(DELIVERY_FILTERS[0].id)
+  // No es parte de DELIVERY_FILTERS ni de un grupo de tabs: la nota
+  // especial es independiente del semáforo de entregas y puede
+  // combinarse con cualquiera de sus opciones, así que es un toggle
+  // aparte en vez de un valor más dentro de ese mismo grupo exclusivo.
+  const [noteFilterActive, setNoteFilterActive] = useState(false)
 
   // El header y la barra de tabs son sticky (quedan fijos arriba al
   // scrollear), y las barras de búsqueda/filtro de cada sección se
@@ -101,6 +108,7 @@ export default function App() {
       shirt_size: runner.shirtSize,
       shirt_delivered: runner.shirtDelivered,
       kit_delivered: runner.kitDelivered,
+      special_note: runner.specialNote,
     })
     if (res.status !== 'ok') {
       throw new Error(res.message || 'No se pudo actualizar el tag')
@@ -108,10 +116,11 @@ export default function App() {
     applyUpdate({ id: runner.id, tagId })
   }
 
-  // Misma lógica que handleUpdateTag pero para los checks permanentes
-  // del popover de info (entrega de camiseta y de paquete de corredor)
-  // — persisten por runner_id igual que el tag. shirt_size no se toca:
-  // viene del .xlsx y no es editable desde este popover.
+  // Misma lógica que handleUpdateTag pero para los datos permanentes
+  // del popover de info (entrega de camiseta y de paquete de corredor,
+  // y la nota especial) — persisten por runner_id igual que el tag.
+  // shirt_size no se toca: viene del .xlsx y no es editable desde este
+  // popover.
   const handleUpdateInfo = async (runner, info) => {
     const res = await updateRunner(runner.id, {
       runner_id: runner.id,
@@ -123,6 +132,7 @@ export default function App() {
       shirt_size: runner.shirtSize,
       shirt_delivered: info.shirtDelivered,
       kit_delivered: info.kitDelivered,
+      special_note: info.specialNote,
     })
     if (res.status !== 'ok') {
       throw new Error(res.message || 'No se pudo actualizar la información del corredor')
@@ -134,9 +144,16 @@ export default function App() {
     RUNNER_CATEGORY_FILTERS.find((f) => f.id === runnerCategoryFilterId) ??
     RUNNER_CATEGORY_FILTERS[0]
 
+  const deliveryFilter =
+    DELIVERY_FILTERS.find((f) => f.id === deliveryFilterId) ?? DELIVERY_FILTERS[0]
+
   const filteredRunners = useMemo(
-    () => filterRunners(runners, query).filter(runnerCategoryFilter.match),
-    [runners, query, runnerCategoryFilter]
+    () =>
+      filterRunners(runners, query)
+        .filter(runnerCategoryFilter.match)
+        .filter(deliveryFilter.match)
+        .filter((runner) => !noteFilterActive || !!runner.specialNote),
+    [runners, query, runnerCategoryFilter, deliveryFilter, noteFilterActive]
   )
 
   return (
@@ -193,7 +210,7 @@ export default function App() {
         <section>
           <div className="sticky-toolbar">
             <div className="runners-toolbar">
-              <div className="filter-buttons" role="tablist" aria-label="Modalidad">
+              <div className="filter-buttons" role="tablist" aria-label="Categoría">
                 {RUNNER_CATEGORY_FILTERS.map((filter) => (
                   <button
                     key={filter.id}
@@ -210,6 +227,36 @@ export default function App() {
                 ))}
               </div>
               <ClearTimesButton onCleared={reload} />
+            </div>
+            <div className="filter-buttons" role="tablist" aria-label="Entregas">
+              {DELIVERY_FILTERS.map((filter) => (
+                <button
+                  key={filter.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={deliveryFilterId === filter.id}
+                  className={`filter-btn ${
+                    deliveryFilterId === filter.id ? 'filter-btn-active' : ''
+                  }`}
+                  onClick={() => setDeliveryFilterId(filter.id)}
+                >
+                  {filter.dot && <span className={`filter-dot filter-dot-${filter.dot}`} />}
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+            {/* Toggle independiente, no exclusivo — se puede combinar con
+                cualquier valor del semáforo de Entregas de arriba, así que
+                va en su propio grupo en vez de sumarse a ese role="tablist". */}
+            <div className="filter-buttons" role="group" aria-label="Notas">
+              <button
+                type="button"
+                aria-pressed={noteFilterActive}
+                className={`filter-btn ${noteFilterActive ? 'filter-btn-active' : ''}`}
+                onClick={() => setNoteFilterActive((active) => !active)}
+              >
+                Con nota especial
+              </button>
             </div>
             <SearchBar query={query} onChange={setQuery} />
           </div>

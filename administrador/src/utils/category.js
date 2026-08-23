@@ -53,29 +53,17 @@ export const PODIUM_GROUPS = SUBCATEGORIES.flatMap((subcategory) =>
   }))
 )
 
-// Alterna la vista de la sección Corredores entre las dos modalidades —
-// no premia nada, a diferencia de PODIUM_GROUPS, así que no reutiliza esa
-// lista aunque comparta la idea de "match" por categoría.
-export const RUNNER_CATEGORY_FILTERS = [
+// Filtro por categoría/modalidad, compartido entre Corredores y
+// Resultados: Todos/5K/10K más el desglose del 10K por subcategoría ×
+// género (PODIUM_GROUPS) — para ver un grupo puntual (p. ej. "Master ·
+// Mujeres") sin tener que revisar el 10K completo a mano.
+const CATEGORY_FILTERS = [
   { id: 'todos', label: 'Todos', match: () => true },
   { id: '5k', label: '5K', match: (runner) => normalize(runner.category) === '5k' },
   { id: '10k', label: '10K', match: (runner) => normalize(runner.category) === '10k' },
-]
-
-export const RESULT_FILTERS = [
-  { id: 'todos', label: 'Todos', match: () => true },
-  {
-    id: '5k',
-    label: '5K',
-    match: (runner) => normalize(runner.category) === '5k',
-  },
-  // Agregado del 10K completo, además del desglose por PODIUM_GROUPS de
-  // abajo (subcategoría × género) — para ver todos los finalizados del
-  // 10K juntos sin tener que ir grupo por grupo, igual que Corredores.
-  {
-    id: '10k',
-    label: '10K',
-    match: (runner) => normalize(runner.category) === '10k',
-  },
   ...PODIUM_GROUPS,
 ]
+
+export const RUNNER_CATEGORY_FILTERS = CATEGORY_FILTERS
+
+export const RESULT_FILTERS = CATEGORY_FILTERS
