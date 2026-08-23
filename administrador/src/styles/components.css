@@ -452,6 +452,30 @@
   box-shadow: var(--glow-primary);
 }
 
+/* Contador en el botón que revela Entregas/Notas (colapsado por
+   default) — para que un filtro activo ahí se note aunque el panel
+   esté cerrado, en vez de seguir filtrando en silencio sin pista
+   visual. */
+.filter-count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  margin-left: 6px;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.filter-btn-active .filter-count-badge {
+  background: #fff;
+  color: var(--accent-primary);
+}
+
 /* Fila que agrupa un filtro amplio (segmented control) con su filtro
    dependiente (el <select> de grupo) — misma unidad visual, así queda
    claro que uno acota al otro en vez de ser dos filtros sueltos. */

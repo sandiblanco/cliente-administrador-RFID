@@ -117,11 +117,20 @@
   background: linear-gradient(140deg, var(--bronze-strong), var(--bronze));
 }
 
+/* line-height: 1 en nombre y tiempo — sin esto, el alto de línea por
+   default (>1) suma espacio extra debajo del texto que el navegador no
+   ve al centrar la fila, así que la medalla (un círculo, sin ese
+   espacio fantasma) queda ópticamente más arriba que el nombre aunque
+   el grid los centre "en teoría". Con line-height:1 la caja de texto
+   coincide con el alto real de las letras y align-items:center (ver
+   .podium-place) los deja al mismo nivel de verdad, con el mismo
+   espacio arriba que abajo. */
 .podium-name {
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  line-height: 1;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: clamp(0.85rem, min(4cqw, 6.5cqh), 1.45rem);
@@ -138,6 +147,7 @@
   font-family: var(--font-display);
   font-weight: 600;
   font-size: clamp(0.78rem, min(3.4cqw, 4.6cqh), 1.2rem);
+  line-height: 1;
   color: var(--text-muted);
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
@@ -145,37 +155,6 @@
 
 .podium-place-1 .podium-time {
   color: var(--gold);
-}
-
-/* Tarjeta angosta (columna única en celular, o 2 columnas en tablet
-   vertical): en una sola línea "medalla · nombre · tiempo" un nombre
-   con dos nombres y dos apellidos —lo normal en la carrera— no entra
-   y el ellipsis se come casi todo. Por debajo de ~380px de ancho de
-   tarjeta se apila: medalla y tiempo arriba, nombre abajo pudiendo
-   ocupar dos líneas en vez de perderse en "...". */
-@container (max-width: 380px) {
-  .podium-place {
-    grid-template-columns: auto 1fr;
-    grid-template-areas: 'medal time' 'name name';
-    row-gap: 2px;
-  }
-
-  .podium-medal {
-    grid-area: medal;
-  }
-
-  .podium-time {
-    grid-area: time;
-    justify-self: end;
-  }
-
-  .podium-name {
-    grid-area: name;
-    white-space: normal;
-    overflow: visible;
-    text-overflow: clip;
-    line-height: 1.15;
-  }
 }
 
 /* En columna única (celular) o con ventana muy baja, la tarjeta ya no

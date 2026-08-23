@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { formatElapsed } from '../utils/formatElapsed'
 import { PODIUM_GROUPS, normalize } from '../utils/category'
+import FitName from './FitName'
 
 const MEDALS = ['1º', '2º', '3º']
 const FLASH_DURATION_MS = 1800
@@ -71,7 +72,7 @@ export default function PodiumBoard({ runners }) {
                     <span className="podium-medal">{i + 1}</span>
                     {runner ? (
                       <>
-                        <span className="podium-name">{runner.name}</span>
+                        <FitName name={runner.name} className="podium-name" />
                         <span className="podium-time">
                           {formatElapsed(runner.elapsedSeconds)}
                         </span>

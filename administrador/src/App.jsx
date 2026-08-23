@@ -8,7 +8,6 @@ import Dashboard from './components/Dashboard'
 import RunnerTable from './components/RunnerTable'
 import ResultsPanel from './components/ResultsPanel'
 import SearchBar from './components/SearchBar'
-import ClearTimesButton from './components/ClearTimesButton'
 import TimeConfigPanel from './components/TimeConfigPanel'
 import HeaderMenu from './components/HeaderMenu'
 import UploadRunnersPage from './components/UploadRunnersPage'
@@ -44,6 +43,13 @@ export default function App() {
   // combinarse con cualquiera de sus opciones, así que es un toggle
   // aparte en vez de un valor más dentro de ese mismo grupo exclusivo.
   const [noteFilterActive, setNoteFilterActive] = useState(false)
+  // Entregas + nota especial quedan colapsados detrás de un botón —
+  // mostrar de entrada las dos filas de filtros (categoría y esto)
+  // resultaba confuso; se revelan solo a pedido. Si ya hay algo activo
+  // ahí (p. ej. se activó y después se cambió de tab), arrancan
+  // visibles en vez de esconder un filtro que sigue filtrando en
+  // silencio.
+  const [extraFiltersOpen, setExtraFiltersOpen] = useState(false)
 
   // El header y la barra de tabs son sticky (quedan fijos arriba al
   // scrollear), y las barras de búsqueda/filtro de cada sección se
@@ -154,6 +160,12 @@ export default function App() {
   const deliveryFilter =
     DELIVERY_FILTERS.find((f) => f.id === deliveryFilterId) ?? DELIVERY_FILTERS[0]
 
+  // Para el badge del botón que revela Entregas/Notas: si hay algo
+  // activo ahí, tiene que notarse aunque el panel esté colapsado — si
+  // no, un filtro sigue filtrando en silencio sin ninguna pista visual.
+  const extraFiltersActiveCount =
+    (deliveryFilterId !== DELIVERY_FILTERS[0].id ? 1 : 0) + (noteFilterActive ? 1 : 0)
+
   // Cambiar de categoría a algo distinto de 10K deja sin sentido el
   // grupo elegido — se limpia acá en vez de en el onClick del botón de
   // categoría para que valga sin importar desde dónde cambie (incluida
@@ -230,11 +242,11 @@ export default function App() {
           {/* Orden de la barra de filtros, de más ancho a más específico
               (estándar de facetas de e-commerce/dashboards): 1) búsqueda
               libre, siempre visible arriba; 2) categoría — el filtro más
-              amplio — junto a su dependiente (grupo del 10K, deshabilitado
-              fuera de 10K); 3) filtros de estado agrupados (entregas +
-              nota); la acción destructiva (Limpiar tiempos) va aparte, a
-              la derecha del primer grupo, para no mezclarse visualmente
-              con los filtros. */}
+              amplio — junto a su dependiente (grupo del 10K, solo visible
+              con 10K activo); 3) filtros de estado (entregas + nota),
+              colapsados detrás de un botón — mostrar las dos filas de
+              entrada resultaba confuso, así que la segunda solo aparece
+              a pedido. */}
           <div className="sticky-toolbar">
             <SearchBar query={query} onChange={setQuery} />
 
@@ -276,41 +288,54 @@ export default function App() {
                   </select>
                 )}
               </div>
-              <ClearTimesButton onCleared={reload} />
+              <button
+                type="button"
+                aria-expanded={extraFiltersOpen}
+                className={`filter-btn ${extraFiltersOpen ? 'filter-btn-active' : ''}`}
+                onClick={() => setExtraFiltersOpen((open) => !open)}
+              >
+                Filtros de entrega
+                {extraFiltersActiveCount > 0 && (
+                  <span className="filter-count-badge">{extraFiltersActiveCount}</span>
+                )}
+              </button>
             </div>
 
-            <div className="filter-group">
-              <div className="filter-buttons" role="tablist" aria-label="Entregas">
-                {DELIVERY_FILTERS.map((filter) => (
+            {extraFiltersOpen && (
+              <div className="filter-group">
+                <div className="filter-buttons" role="tablist" aria-label="Entregas">
+                  {DELIVERY_FILTERS.map((filter) => (
+                    <button
+                      key={filter.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={deliveryFilterId === filter.id}
+                      className={`filter-btn ${
+                        deliveryFilterId === filter.id ? 'filter-btn-active' : ''
+                      }`}
+                      onClick={() => setDeliveryFilterId(filter.id)}
+                    >
+                      {filter.dot && <span className={`filter-dot filter-dot-${filter.dot}`} />}
+                      {filter.label}
+                    </button>
+                  ))}
+                </div>
+                {/* Toggle independiente, no exclusivo — se puede combinar
+                    con cualquier valor del semáforo de Entregas, así que
+                    va en su propio role="group" en vez de sumarse a ese
+                    tablist. */}
+                <div className="filter-buttons" role="group" aria-label="Notas">
                   <button
-                    key={filter.id}
                     type="button"
-                    role="tab"
-                    aria-selected={deliveryFilterId === filter.id}
-                    className={`filter-btn ${
-                      deliveryFilterId === filter.id ? 'filter-btn-active' : ''
-                    }`}
-                    onClick={() => setDeliveryFilterId(filter.id)}
+                    aria-pressed={noteFilterActive}
+                    className={`filter-btn ${noteFilterActive ? 'filter-btn-active' : ''}`}
+                    onClick={() => setNoteFilterActive((active) => !active)}
                   >
-                    {filter.dot && <span className={`filter-dot filter-dot-${filter.dot}`} />}
-                    {filter.label}
+                    Con nota especial
                   </button>
-                ))}
+                </div>
               </div>
-              {/* Toggle independiente, no exclusivo — se puede combinar con
-                  cualquier valor del semáforo de Entregas, así que va en su
-                  propio role="group" en vez de sumarse a ese tablist. */}
-              <div className="filter-buttons" role="group" aria-label="Notas">
-                <button
-                  type="button"
-                  aria-pressed={noteFilterActive}
-                  className={`filter-btn ${noteFilterActive ? 'filter-btn-active' : ''}`}
-                  onClick={() => setNoteFilterActive((active) => !active)}
-                >
-                  Con nota especial
-                </button>
-              </div>
-            </div>
+            )}
           </div>
           <RunnerTable
             runners={filteredRunners}
