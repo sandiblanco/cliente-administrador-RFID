@@ -1,8 +1,8 @@
 # Carrera del Informático · Sistema RFID
 
-Monorepo con las tres aplicaciones web del sistema de cronometraje por RFID
-de la Carrera del Informático. El backend (API, worker, base de datos) vive
-en un repositorio aparte, incluido acá como submódulo git.
+Monorepo con las cuatro aplicaciones web del sistema de cronometraje por
+RFID de la Carrera del Informático. El backend (API, worker, base de
+datos) vive en un repositorio aparte, incluido acá como submódulo git.
 
 ## Apps
 
@@ -11,9 +11,14 @@ en un repositorio aparte, incluido acá como submódulo git.
 | **Cliente** | [`cliente/`](cliente/README.md) | El staff en la meta, registrando llegadas a mano (RFID + respaldo manual) | [cliente/README.md](cliente/README.md) |
 | **Administrador** | [`administrador/`](administrador/README.md) | El organizador: corredores, tiempos, tags RFID, entregas, podio | [administrador/README.md](administrador/README.md) |
 | **Podio** | [`podio/`](podio/README.md) | Pantalla pública de solo lectura (TV/proyector) con el medallero en vivo | [podio/README.md](podio/README.md) |
+| **Resultados** | [`resultados/`](resultados/README.md) | Cualquier corredor, buscando su propio resultado por dorsal o nombre — la única pensada para internet abierto, no solo LAN/Tailscale | [resultados/README.md](resultados/README.md) |
 
-Las tres son SPAs en React + Vite, comparten la misma identidad visual
-(paleta navy/neón, tipografía Chakra Petch) y hablan con el mismo backend.
+Las cuatro son SPAs en React + Vite y comparten la misma identidad visual
+(paleta navy/neón, tipografía Chakra Petch). Cliente/administrador/podio
+hablan con el backend por LAN o Tailscale (o el Nginx de su propio
+contenedor); resultados es la excepción — le pega directo al backend por
+el Tailscale Funnel público, con su propio endpoint de solo lectura y
+rate limit (ver [resultados/README.md](resultados/README.md)).
 
 ## Backend
 
@@ -110,8 +115,21 @@ detalle de hosts/puertos.
 cliente/          Registro de llegadas (staff en meta)
 administrador/     Panel de control (organizador)
 podio/             Pantalla pública de medallero en vivo
+resultados/        Portal público de resultados (solo Azure, no en el docker-compose)
 conexionServer/    Submódulo git → backend (FastAPI + Mongo + Redis + worker)
-docker-compose.yml Levanta las tres apps frontend
+docker-compose.yml Levanta cliente/administrador/podio (resultados no vive acá)
 deploy.sh          Despliegue al NAS de la carrera
 docs/              Notas de diseño / especificaciones puntuales
 ```
+
+## Azure Static Web Apps
+
+Las cuatro apps también se despliegan automáticamente a Azure Static Web
+Apps (tier Free) en cada push a `dev`, vía
+`.github/workflows/deploy-{cliente,admin,podio,resultados}.yml`. Cada
+workflow hace `npm run build` con `VITE_API_URL`/`VITE_SERVER_URL`
+apuntando a `vars.BACKEND_URL` (el Tailscale Funnel público del backend)
+y sube `dist/` con un token propio por app (`AZURE_SWA_TOKEN_*`, como
+secret del repo). `resultados` es la única de las cuatro que **solo**
+vive en Azure — no tiene contenedor ni entrada en el `docker-compose.yml`
+del NAS, porque no hace falta probarla por LAN.

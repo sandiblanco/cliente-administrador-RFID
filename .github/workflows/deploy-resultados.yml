@@ -1,0 +1,38 @@
+name: Deploy Resultados a Azure
+
+on:
+  push:
+    branches: [dev]
+    paths:
+      - "resultados/**"
+      - ".github/workflows/deploy-resultados.yml"
+  workflow_dispatch:
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Instalar dependencias
+        working-directory: resultados
+        run: npm ci
+
+      - name: Build
+        working-directory: resultados
+        env:
+          VITE_API_URL: ${{ vars.BACKEND_URL }}
+        run: npm run build
+
+      - name: Deploy a Azure Static Web Apps
+        uses: Azure/static-web-apps-deploy@v1
+        with:
+          azure_static_web_apps_api_token: ${{ secrets.AZURE_SWA_TOKEN_RESULTADOS }}
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          action: upload
+          app_location: resultados/dist
+          skip_app_build: true
