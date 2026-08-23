@@ -14,7 +14,7 @@ import HeaderMenu from './components/HeaderMenu'
 import UploadRunnersPage from './components/UploadRunnersPage'
 import { AlertIcon, MoonIcon, ReloadIcon, SunIcon } from './components/icons'
 import { filterRunners } from './utils/search'
-import { RUNNER_CATEGORY_FILTERS } from './utils/category'
+import { RUNNER_CATEGORY_FILTERS, GROUP_FILTERS } from './utils/category'
 import { DELIVERY_FILTERS } from './utils/delivery'
 
 const TABS = [
@@ -33,6 +33,11 @@ export default function App() {
   const [runnerCategoryFilterId, setRunnerCategoryFilterId] = useState(
     RUNNER_CATEGORY_FILTERS[0].id
   )
+  // Dependiente del filtro de categoría: solo tiene efecto real cuando
+  // esta última es '10k' (ver disabled del <select> más abajo) — se
+  // resetea a 'todos' apenas se sale del 10K para que no quede un
+  // grupo elegido "fantasma" filtrando en silencio.
+  const [groupFilterId, setGroupFilterId] = useState(GROUP_FILTERS[0].id)
   const [deliveryFilterId, setDeliveryFilterId] = useState(DELIVERY_FILTERS[0].id)
   // No es parte de DELIVERY_FILTERS ni de un grupo de tabs: la nota
   // especial es independiente del semáforo de entregas y puede
@@ -144,16 +149,30 @@ export default function App() {
     RUNNER_CATEGORY_FILTERS.find((f) => f.id === runnerCategoryFilterId) ??
     RUNNER_CATEGORY_FILTERS[0]
 
+  const groupFilter = GROUP_FILTERS.find((f) => f.id === groupFilterId) ?? GROUP_FILTERS[0]
+
   const deliveryFilter =
     DELIVERY_FILTERS.find((f) => f.id === deliveryFilterId) ?? DELIVERY_FILTERS[0]
+
+  // Cambiar de categoría a algo distinto de 10K deja sin sentido el
+  // grupo elegido — se limpia acá en vez de en el onClick del botón de
+  // categoría para que valga sin importar desde dónde cambie (incluida
+  // una futura navegación por URL).
+  const handleCategoryFilterChange = (id) => {
+    setRunnerCategoryFilterId(id)
+    if (id !== '10k') {
+      setGroupFilterId(GROUP_FILTERS[0].id)
+    }
+  }
 
   const filteredRunners = useMemo(
     () =>
       filterRunners(runners, query)
         .filter(runnerCategoryFilter.match)
+        .filter(groupFilter.match)
         .filter(deliveryFilter.match)
         .filter((runner) => !noteFilterActive || !!runner.specialNote),
-    [runners, query, runnerCategoryFilter, deliveryFilter, noteFilterActive]
+    [runners, query, runnerCategoryFilter, groupFilter, deliveryFilter, noteFilterActive]
   )
 
   return (
@@ -208,57 +227,84 @@ export default function App() {
 
       {!loading && activeTab === 'runners' && (
         <section>
+          {/* Orden de la barra de filtros, de más ancho a más específico
+              (estándar de facetas de e-commerce/dashboards): 1) búsqueda
+              libre, siempre visible arriba; 2) categoría — el filtro más
+              amplio — junto a su dependiente (grupo del 10K, deshabilitado
+              fuera de 10K); 3) filtros de estado agrupados (entregas +
+              nota); la acción destructiva (Limpiar tiempos) va aparte, a
+              la derecha del primer grupo, para no mezclarse visualmente
+              con los filtros. */}
           <div className="sticky-toolbar">
+            <SearchBar query={query} onChange={setQuery} />
+
             <div className="runners-toolbar">
-              <div className="filter-buttons" role="tablist" aria-label="Categoría">
-                {RUNNER_CATEGORY_FILTERS.map((filter) => (
+              <div className="filter-group">
+                <div className="filter-buttons" role="tablist" aria-label="Categoría">
+                  {RUNNER_CATEGORY_FILTERS.map((filter) => (
+                    <button
+                      key={filter.id}
+                      type="button"
+                      role="tab"
+                      aria-selected={runnerCategoryFilterId === filter.id}
+                      className={`filter-btn ${
+                        runnerCategoryFilterId === filter.id ? 'filter-btn-active' : ''
+                      }`}
+                      onClick={() => handleCategoryFilterChange(filter.id)}
+                    >
+                      {filter.label}
+                    </button>
+                  ))}
+                </div>
+                <select
+                  className="filter-select"
+                  aria-label="Grupo del 10K"
+                  disabled={runnerCategoryFilterId !== '10k'}
+                  value={groupFilterId}
+                  onChange={(event) => setGroupFilterId(event.target.value)}
+                >
+                  {GROUP_FILTERS.map((filter) => (
+                    <option key={filter.id} value={filter.id}>
+                      {filter.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <ClearTimesButton onCleared={reload} />
+            </div>
+
+            <div className="filter-group">
+              <div className="filter-buttons" role="tablist" aria-label="Entregas">
+                {DELIVERY_FILTERS.map((filter) => (
                   <button
                     key={filter.id}
                     type="button"
                     role="tab"
-                    aria-selected={runnerCategoryFilterId === filter.id}
+                    aria-selected={deliveryFilterId === filter.id}
                     className={`filter-btn ${
-                      runnerCategoryFilterId === filter.id ? 'filter-btn-active' : ''
+                      deliveryFilterId === filter.id ? 'filter-btn-active' : ''
                     }`}
-                    onClick={() => setRunnerCategoryFilterId(filter.id)}
+                    onClick={() => setDeliveryFilterId(filter.id)}
                   >
+                    {filter.dot && <span className={`filter-dot filter-dot-${filter.dot}`} />}
                     {filter.label}
                   </button>
                 ))}
               </div>
-              <ClearTimesButton onCleared={reload} />
-            </div>
-            <div className="filter-buttons" role="tablist" aria-label="Entregas">
-              {DELIVERY_FILTERS.map((filter) => (
+              {/* Toggle independiente, no exclusivo — se puede combinar con
+                  cualquier valor del semáforo de Entregas, así que va en su
+                  propio role="group" en vez de sumarse a ese tablist. */}
+              <div className="filter-buttons" role="group" aria-label="Notas">
                 <button
-                  key={filter.id}
                   type="button"
-                  role="tab"
-                  aria-selected={deliveryFilterId === filter.id}
-                  className={`filter-btn ${
-                    deliveryFilterId === filter.id ? 'filter-btn-active' : ''
-                  }`}
-                  onClick={() => setDeliveryFilterId(filter.id)}
+                  aria-pressed={noteFilterActive}
+                  className={`filter-btn ${noteFilterActive ? 'filter-btn-active' : ''}`}
+                  onClick={() => setNoteFilterActive((active) => !active)}
                 >
-                  {filter.dot && <span className={`filter-dot filter-dot-${filter.dot}`} />}
-                  {filter.label}
+                  Con nota especial
                 </button>
-              ))}
+              </div>
             </div>
-            {/* Toggle independiente, no exclusivo — se puede combinar con
-                cualquier valor del semáforo de Entregas de arriba, así que
-                va en su propio grupo en vez de sumarse a ese role="tablist". */}
-            <div className="filter-buttons" role="group" aria-label="Notas">
-              <button
-                type="button"
-                aria-pressed={noteFilterActive}
-                className={`filter-btn ${noteFilterActive ? 'filter-btn-active' : ''}`}
-                onClick={() => setNoteFilterActive((active) => !active)}
-              >
-                Con nota especial
-              </button>
-            </div>
-            <SearchBar query={query} onChange={setQuery} />
           </div>
           <RunnerTable
             runners={filteredRunners}

@@ -53,17 +53,25 @@ export const PODIUM_GROUPS = SUBCATEGORIES.flatMap((subcategory) =>
   }))
 )
 
-// Filtro por categoría/modalidad, compartido entre Corredores y
-// Resultados: Todos/5K/10K más el desglose del 10K por subcategoría ×
-// género (PODIUM_GROUPS) — para ver un grupo puntual (p. ej. "Master ·
-// Mujeres") sin tener que revisar el 10K completo a mano.
+// Filtro amplio por modalidad, compartido entre Corredores y
+// Resultados: Todos/5K/10K. El desglose por subcategoría × género vive
+// aparte en GROUP_FILTERS — combinarlo acá como 9 pills sueltos hacía
+// el filtro ilegible, así que se separa en un segmented control
+// (esto) + un <select> dependiente que solo importa dentro del 10K.
 const CATEGORY_FILTERS = [
   { id: 'todos', label: 'Todos', match: () => true },
   { id: '5k', label: '5K', match: (runner) => normalize(runner.category) === '5k' },
   { id: '10k', label: '10K', match: (runner) => normalize(runner.category) === '10k' },
-  ...PODIUM_GROUPS,
 ]
 
 export const RUNNER_CATEGORY_FILTERS = CATEGORY_FILTERS
 
 export const RESULT_FILTERS = CATEGORY_FILTERS
+
+// Desglose del 10K por subcategoría × género, para el <select> "Grupo"
+// que acompaña al filtro de categoría — solo tiene sentido cuando la
+// categoría activa es 10K (ver disabled en App.jsx/ResultsPanel.jsx).
+export const GROUP_FILTERS = [
+  { id: 'todos', label: 'Todos los grupos', match: () => true },
+  ...PODIUM_GROUPS,
+]

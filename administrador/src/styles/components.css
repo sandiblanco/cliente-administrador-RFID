@@ -452,6 +452,41 @@
   box-shadow: var(--glow-primary);
 }
 
+/* Fila que agrupa un filtro amplio (segmented control) con su filtro
+   dependiente (el <select> de grupo) — misma unidad visual, así queda
+   claro que uno acota al otro en vez de ser dos filtros sueltos. */
+.filter-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.filter-group .filter-buttons {
+  margin-bottom: 0;
+}
+
+.filter-select {
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.filter-select:hover:not(:disabled) {
+  border-color: var(--accent-primary);
+}
+
+.filter-select:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 /* Puntito de color en los botones del filtro de "Entregas" — mismo
    semáforo (gris/ámbar/verde) que el ícono de info por corredor, ver
    deliveryClass en RunnerInfoButton y DELIVERY_FILTERS en
