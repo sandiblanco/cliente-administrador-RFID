@@ -7,6 +7,7 @@ import CONFIG from './config'
 import Dashboard from './components/Dashboard'
 import RunnerTable from './components/RunnerTable'
 import ResultsPanel from './components/ResultsPanel'
+import ReportsPanel from './components/ReportsPanel'
 import SearchBar from './components/SearchBar'
 import TimeConfigPanel from './components/TimeConfigPanel'
 import HeaderMenu from './components/HeaderMenu'
@@ -21,6 +22,7 @@ const TABS = [
   { id: 'runners', label: 'Corredores' },
   { id: 'results', label: 'Resultados' },
   { id: 'time-config', label: 'Configuración de tiempos' },
+  { id: 'reports', label: 'Informes' },
 ]
 
 export default function App() {
@@ -364,6 +366,12 @@ export default function App() {
       {!loading && activeTab === 'time-config' && (
         <section>
           <TimeConfigPanel onTimesCleared={reload} />
+        </section>
+      )}
+
+      {!loading && activeTab === 'reports' && (
+        <section>
+          <ReportsPanel />
         </section>
       )}
 

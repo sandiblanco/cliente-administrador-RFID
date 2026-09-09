@@ -137,6 +137,64 @@ export async function getRaceConfig() {
   return request(CONFIG.http.raceConfig)
 }
 
+// Agregados de corredores/resultados para la pestaña Informes (ver
+// ReportsPanel): totales, por categoría/género/subcategoría, camisetas,
+// kits, tags, notas especiales, ausentes, tiempos y calidad de
+// resultados. No pasa por request() porque ese helper devuelve
+// MOCK_RUNNERS en modo demo — la mock data no trae categoría, género ni
+// ningún campo de entrega, así que el modo demo no tiene forma real de
+// alimentar este informe (mismo límite que ya tienen RunnerTable/
+// RunnerInfoButton con esos mismos campos).
+export async function getReportSummary() {
+  if (CONFIG.useMock) {
+    throw new Error('Los informes no están disponibles en modo demo')
+  }
+  const res = await fetch(CONFIG.http.reportsSummary)
+  if (!res.ok) {
+    throw new Error(`Error del servidor (${res.status})`)
+  }
+  return res.json()
+}
+
+// Dispara la descarga de un export binario (.xlsx/.pdf): pide el
+// archivo como blob y simula el click en un <a download> temporal — es
+// lo que hace falta para que el navegador lo guarde en vez de
+// navegar a la URL, ya que la respuesta no es JSON y no puede pasar
+// por request().
+async function downloadBinary(url, fallbackFilename) {
+  const res = await fetch(url)
+  if (!res.ok) {
+    throw new Error(`Error del servidor (${res.status})`)
+  }
+  const blob = await res.blob()
+  const disposition = res.headers.get('Content-Disposition') || ''
+  const match = disposition.match(/filename="?([^"]+)"?/)
+  const filename = match ? match[1] : fallbackFilename
+
+  const objectUrl = URL.createObjectURL(blob)
+  const link = document.createElement('a')
+  link.href = objectUrl
+  link.download = filename
+  document.body.appendChild(link)
+  link.click()
+  link.remove()
+  URL.revokeObjectURL(objectUrl)
+}
+
+export async function downloadReportXlsx() {
+  if (CONFIG.useMock) {
+    throw new Error('Los informes no están disponibles en modo demo')
+  }
+  return downloadBinary(CONFIG.http.reportsExportXlsx, 'informe_carrera.xlsx')
+}
+
+export async function downloadReportPdf() {
+  if (CONFIG.useMock) {
+    throw new Error('Los informes no están disponibles en modo demo')
+  }
+  return downloadBinary(CONFIG.http.reportsExportPdf, 'informe_carrera.pdf')
+}
+
 // Reemplaza TODOS los corredores (y borra los tiempos ya registrados) a
 // partir de un .xlsx con el listado de inscritos. No pasa por request()
 // porque es multipart, no JSON: el navegador arma el Content-Type con el

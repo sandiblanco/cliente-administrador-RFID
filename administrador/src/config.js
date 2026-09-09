@@ -21,6 +21,9 @@ const CONFIG = {
     runnersReplaceFromFile: `${SERVER_URL}/runners/bulk/replace-from-file`,
     results: `${SERVER_URL}/results`,
     raceConfig: `${SERVER_URL}/race-config`,
+    reportsSummary: `${SERVER_URL}/reports/summary`,
+    reportsExportXlsx: `${SERVER_URL}/reports/export.xlsx`,
+    reportsExportPdf: `${SERVER_URL}/reports/export.pdf`,
   },
   socket: {
     socketURL:

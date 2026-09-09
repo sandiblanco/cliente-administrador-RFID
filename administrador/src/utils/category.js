@@ -13,7 +13,7 @@
 // parse_runners_xlsx, server/main.py). Acá solo hace falta darle
 // etiqueta para que salga en el podio y en los filtros.
 
-const GENDERS = [
+export const GENDERS = [
   { value: 'M', label: 'Hombres' },
   { value: 'F', label: 'Mujeres' },
 ]

@@ -177,6 +177,26 @@ export function PlusIcon(props) {
   )
 }
 
+export function DownloadIcon(props) {
+  return (
+    <svg
+      width="15"
+      height="15"
+      viewBox="0 0 16 16"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M8 1.5V11M8 11 4.7 7.7M8 11l3.3-3.3" />
+      <path d="M2.5 11v1.8a1.7 1.7 0 0 0 1.7 1.7h7.6a1.7 1.7 0 0 0 1.7-1.7V11" />
+    </svg>
+  )
+}
+
 export function SearchIcon(props) {
   return (
     <svg
